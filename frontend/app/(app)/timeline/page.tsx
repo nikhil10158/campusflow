@@ -125,7 +125,7 @@ export default function TimelinePage() {
 
   return (
     <>
-      <PageHeader title="Venue Timeline" subtitle="Drag across a row to test a window. Non-admin users see 'Busy' only, never titles or purposes." />
+      <PageHeader help={["Choose a day and a room type. Each row is a room from 07:00 to 22:00.", "Drag across a row to test a time window; the verdict appears below.", "If it is free, name it and press Book this to get a proposal."]} title="Venue Timeline" subtitle="Drag across a row to test a window. Non-admin users see 'Busy' only, never titles or purposes." />
       <Card className="mb-4">
         <div className="flex flex-wrap items-end gap-3">
           <Field label="View">

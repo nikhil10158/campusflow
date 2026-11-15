@@ -55,7 +55,7 @@ function Item({ item }: { item: ApprovalItem }) {
         </div>
         <div className="flex flex-col items-end gap-1">
           <Badge tone="info">step {item.order}: {item.scope}</Badge>
-          {item.due_at && <span className="text-[11px] text-muted">due {fmtDateTime(item.due_at)}</span>}
+          {item.due_at && <span className="text-xs text-muted">due {fmtDateTime(item.due_at)}</span>}
         </div>
       </div>
       <div className="mt-3">
@@ -118,7 +118,7 @@ export default function ApprovalsPage() {
   const query = useQuery({ queryKey: ["approvals"], queryFn: () => api<ApprovalItem[]>("/approvals"), refetchInterval: 20000 });
   return (
     <>
-      <PageHeader title="Approvals" subtitle="Only steps inside your scope appear. Every approval re-checks availability and policy first; a stale request must be re-planned instead of approved blindly." />
+      <PageHeader help={["Only steps that are yours to decide are listed.", "Each one is re-checked just now; if the world changed you will see 'stale' and alternatives.", "Approve, or reject with a short reason."]} title="Approvals" subtitle="Only steps inside your scope appear. Every approval re-checks availability and policy first; a stale request must be re-planned instead of approved blindly." />
       {query.isPending && <LoadingRows rows={3} />}
       {query.isError && <ErrorBox error={query.error} />}
       {query.data?.length === 0 && <Empty>Nothing is waiting for you.</Empty>}

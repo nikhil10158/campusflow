@@ -65,11 +65,40 @@ export default function Concierge() {
   const [clarify, setClarify] = useState<Clarify | null>(null);
   const [finished, setFinished] = useState(false);
   const bottom = useRef<HTMLDivElement>(null);
+  const proposalBox = useRef<HTMLDivElement>(null);
+  const askBox = useRef<HTMLInputElement>(null);
   const push = useToasts((state) => state.push);
 
   useEffect(() => {
     bottom.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }, [messages, steps]);
+
+  useEffect(() => {
+    if (proposals.length > 0) proposalBox.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [proposals.length]);
+
+  useEffect(() => {
+    const focusAsk = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement;
+      if (event.key === "/" && !["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)) {
+        event.preventDefault();
+        askBox.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", focusAsk);
+    return () => window.removeEventListener("keydown", focusAsk);
+  }, []);
+
+  function startOver() {
+    setMessages([]);
+    setPlan([]);
+    setSteps([]);
+    setProposals([]);
+    setClarify(null);
+    setVerify(null);
+    setFinished(false);
+    askBox.current?.focus();
+  }
 
   async function run(text: string, clarification: Clarify | null = null, answer = "") {
     const shown = clarification ? answer : text;
@@ -129,7 +158,7 @@ export default function Concierge() {
 
   return (
     <>
-      <PageHeader kicker="Concierge" title="Say it in one sentence" subtitle="The planner turns a sentence into a venue, guest-house and parking plan, checks every rule twice, and stops at the platform edge. You press Submit; approvers decide." />
+      <PageHeader help={["Type what you need in plain words, or tap a popular route.", "Watch the route on the right: each stop is a step the planner takes.", "Review the proposal that appears, then press Submit. Nothing is booked until you do."]} kicker="Concierge" title="Say it in one sentence" subtitle="The planner turns a sentence into a venue, guest-house and parking plan, checks every rule twice, and stops at the platform edge. You press Submit; approvers decide." />
 
       <form
         onSubmit={(event) => {
@@ -140,11 +169,12 @@ export default function Concierge() {
       >
         <label htmlFor="ask" className="flex items-center justify-between border-b border-white/15 px-4 py-1.5 font-display text-sm uppercase tracking-[0.25em] text-boardink">
           <span>Check-in · where to?</span>
-          <span className="text-white/50">{busy ? "Boarding…" : "Ready"}</span>
+          <span className="flex items-center gap-3 text-white/60">{started && !busy && <button type="button" onClick={startOver} className="underline underline-offset-4 hover:text-white">Start over</button>}{busy ? "Boarding…" : <>Press <kbd className="border border-white/30 px-1">/</kbd> to focus</>}</span>
         </label>
         <div className="flex items-stretch">
           <input
             id="ask"
+            ref={askBox}
             value={input}
             onChange={(event) => setInput(event.target.value)}
             placeholder="Host a 2-day AI workshop on 3–4 Dec for 80 people, 2 external speakers, 12 cars"
@@ -221,7 +251,7 @@ export default function Concierge() {
                             {call.summary === undefined ? <Loader2 className="h-3 w-3 animate-spin" aria-label="Running" /> : <Badge tone={call.error ? "bad" : "good"}>{call.latency?.toFixed(0)} ms</Badge>}
                           </div>
                           <p className="mt-1 text-muted">{call.rationale}</p>
-                          <p className="mt-1 break-all font-mono text-[11px] opacity-60">{JSON.stringify(call.args).slice(0, 140)}</p>
+                          <p className="mt-1 break-all font-mono text-xs opacity-60">{JSON.stringify(call.args).slice(0, 140)}</p>
                           {call.summary && <p className={cx("mt-1 font-medium", call.error && "text-bad")}>→ {call.summary}</p>}
                         </div>
                       )}
@@ -230,7 +260,7 @@ export default function Concierge() {
                 })}
                 {verify && (
                   <li className="relative pl-9">
-                    <span className="absolute left-0 top-0.5 grid h-6 w-6 place-items-center rounded-full border-[4px] border-edge bg-primary font-display text-[11px] font-bold" aria-hidden>
+                    <span className="absolute left-0 top-0.5 grid h-6 w-6 place-items-center rounded-full border-[4px] border-edge bg-primary font-display text-xs font-bold" aria-hidden>
                       2×
                     </span>
                     <p className="mb-1 font-display text-xl font-semibold uppercase leading-tight tracking-wide">Terminus · checked twice</p>
@@ -251,7 +281,8 @@ export default function Concierge() {
       )}
 
       {proposals.length > 0 && (
-        <div className="mt-8 space-y-6">
+        <div ref={proposalBox} className="mt-8 scroll-mt-32 space-y-6">
+          <p className="font-display text-sm uppercase tracking-[0.25em] text-muted">Proposal ready · review, then submit</p>
           {proposals.map((proposal, index) => (
             <ProposalCard key={`${proposal.title}-${index}`} proposal={proposal} onDiscard={() => setProposals((current) => current.filter((_, i) => i !== index))} />
           ))}

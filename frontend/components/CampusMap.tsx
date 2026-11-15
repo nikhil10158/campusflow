@@ -25,10 +25,10 @@ export function CampusMap({ highlight = {}, selected = null, onSelect }: Props) 
           return (
             <g key={building.id} transform={`translate(${building.x * SCALE} ${building.y * SCALE})`} onClick={() => onSelect?.(building.id)} className={cx(onSelect && "cursor-pointer")} tabIndex={onSelect ? 0 : -1} onKeyDown={(event) => event.key === "Enter" && onSelect?.(building.id)}>
               <rect x={-38} y={-22} width={76} height={44} rx={8} className={cx("stroke-2", count > 0 ? "fill-goodbg stroke-good" : "fill-surface stroke-line", isSelected && "stroke-primary")} />
-              <text textAnchor="middle" y={-3} className="fill-ink text-[10px] font-medium">
+              <text textAnchor="middle" y={-3} className="fill-ink text-xs font-medium">
                 {building.name.replace("Academic ", "").replace("Complex", "Cx")}
               </text>
-              <text textAnchor="middle" y={12} className={cx("text-[10px]", count > 0 ? "fill-good" : "fill-muted")}>
+              <text textAnchor="middle" y={12} className={cx("text-xs", count > 0 ? "fill-good" : "fill-muted")}>
                 {count > 0 ? `${count} free` : building.zone}
               </text>
             </g>

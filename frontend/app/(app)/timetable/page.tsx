@@ -45,7 +45,7 @@ function WeeklyGrid({ entries, periods }: { entries: TimetableEntry[]; periods: 
       <div className="grid min-w-[760px] gap-1" style={{ gridTemplateColumns: `56px repeat(${periods.length}, minmax(0, 1fr))` }}>
         <div />
         {periods.map((period) => (
-          <div key={period[0]} className="text-center text-[11px] text-muted">{period[0]}–{period[1]}</div>
+          <div key={period[0]} className="text-center text-xs text-muted">{period[0]}–{period[1]}</div>
         ))}
         {WEEKDAYS.slice(0, 6).map((name, weekday) => {
           const cells: React.ReactNode[] = [];
@@ -56,7 +56,7 @@ function WeeklyGrid({ entries, periods }: { entries: TimetableEntry[]; periods: 
               const last = ends.findIndex((end) => end === entry.end_min);
               const span = Math.max(1, last - index + 1);
               cells.push(
-                <div key={entry.entry_id} style={{ gridColumn: `span ${span}` }} className={`rounded-lg p-1.5 text-[11px] leading-tight ${KIND_STYLE[entry.kind]} ${entry.exception ? "opacity-50 line-through" : ""}`} title={`${entry.course_name} · ${entry.faculty}`}>
+                <div key={entry.entry_id} style={{ gridColumn: `span ${span}` }} className={`rounded-lg p-1.5 text-xs leading-tight ${KIND_STYLE[entry.kind]} ${entry.exception ? "opacity-50 line-through" : ""}`} title={`${entry.course_name} · ${entry.faculty}`}>
                   <div className="font-semibold">{entry.course_code}</div>
                   <div>{entry.venue_code}</div>
                   <div className="truncate opacity-80">{entry.faculty}</div>
@@ -107,7 +107,7 @@ export default function TimetablePage() {
 
   return (
     <>
-      <PageHeader title="Cross-Semester Explorer" subtitle="Any section's weekly timetable, plus how many classrooms are free in every weekday and period across all semesters." />
+      <PageHeader help={["Pick a section to see its week.", "The heatmap shows how many classrooms are free in each period.", "Click a heatmap cell to list those rooms."]} title="Cross-Semester Explorer" subtitle="Any section's weekly timetable, plus how many classrooms are free in every weekday and period across all semesters." />
       <div className="grid gap-4 xl:grid-cols-2">
         <Card title="Section timetable">
           <div className="mb-3 flex flex-wrap gap-2">
@@ -137,7 +137,7 @@ export default function TimetablePage() {
             <div className="overflow-x-auto">
               <div className="grid min-w-[560px] gap-1" style={{ gridTemplateColumns: `56px repeat(${periods.length}, minmax(0, 1fr))` }}>
                 <div />
-                {periods.map((p) => <div key={p[0]} className="text-center text-[11px] text-muted">{p[0]}</div>)}
+                {periods.map((p) => <div key={p[0]} className="text-center text-xs text-muted">{p[0]}</div>)}
                 {WEEKDAYS.slice(0, 6).map((day, weekday) => (
                   <div key={day} className="contents">
                     <div className="flex items-center text-xs font-medium">{day}</div>

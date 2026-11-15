@@ -121,7 +121,7 @@ function Roundel() {
     <Link href="/" className="flex items-center gap-2.5" aria-label="CampusFlow home">
       <span className="relative grid h-9 w-9 place-items-center rounded-full border-[5px] border-primary" aria-hidden>
         <span className="absolute left-[-9px] right-[-9px] top-1/2 h-3 -translate-y-1/2 bg-boardink" />
-        <span className="relative font-display text-[11px] font-bold leading-none text-board">CF</span>
+        <span className="relative font-display text-xs font-bold leading-none text-board">CF</span>
       </span>
       <span className="font-display text-2xl font-bold uppercase leading-none tracking-[0.12em] text-white">Campusflow</span>
     </Link>
@@ -194,9 +194,17 @@ function BoardStrip({ dark, toggleTheme, onSearch, onMenu, menuOpen }: { dark: b
   );
 }
 
-function Station({ group, index, pathname }: { group: NavGroup; index: number; pathname: string }) {
+function Station({ group, index, pathname, badge }: { group: NavGroup; index: number; pathname: string; badge?: number }) {
   const [open, setOpen] = useState(false);
   const box = useRef<HTMLDivElement>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hoverOpen = () => {
+    if (timer.current) clearTimeout(timer.current);
+    setOpen(true);
+  };
+  const hoverClose = () => {
+    timer.current = setTimeout(() => setOpen(false), 160);
+  };
   const active = group.items.some((item) => isActive(pathname, item.href));
   const color = LINE_COLORS[index % LINE_COLORS.length];
   useEffect(() => {
@@ -216,12 +224,13 @@ function Station({ group, index, pathname }: { group: NavGroup; index: number; p
     };
   }, [open]);
   return (
-    <div ref={box} className="relative">
-      <button onClick={() => setOpen(!open)} aria-expanded={open} className="group flex items-center gap-2 py-3 pr-1">
+    <div ref={box} className="relative" onMouseEnter={hoverOpen} onMouseLeave={hoverClose}>
+      <button onClick={() => setOpen(!open)} aria-expanded={open} className="group flex items-center gap-2 py-2.5 pr-1">
         <span className={cx("grid h-5 w-5 place-items-center rounded-full border-[3px] border-edge bg-surface transition-transform group-hover:scale-110")} style={active ? { background: color } : undefined} aria-hidden>
           {active && <span className="h-1.5 w-1.5 rounded-full bg-edge" />}
         </span>
         <span className={cx("font-display text-[17px] font-semibold uppercase tracking-widest", active ? "text-ink" : "text-muted group-hover:text-ink")}>{group.label}</span>
+        {badge ? <span className="grid min-w-5 place-items-center rounded-full bg-bad px-1 font-display text-xs font-bold leading-5 text-white" aria-label={`${badge} waiting`}>{badge}</span> : null}
       </button>
       {open && (
         <div className="slide absolute left-0 top-full z-40 w-72 border border-edge border-t-4 bg-surface" style={{ borderTopColor: color }}>
@@ -244,12 +253,12 @@ function Station({ group, index, pathname }: { group: NavGroup; index: number; p
   );
 }
 
-function LineMap({ groups, pathname }: { groups: NavGroup[]; pathname: string }) {
+function LineMap({ groups, pathname, pending }: { groups: NavGroup[]; pathname: string; pending: number }) {
   return (
     <nav className="mx-auto hidden max-w-[1500px] items-center px-4 lg:flex" aria-label="Main">
       {groups.map((group, index) => (
         <Fragment key={group.label}>
-          <Station group={group} index={index} pathname={pathname} />
+          <Station group={group} index={index} pathname={pathname} badge={group.label === "Decide" ? pending : 0} />
           {index < groups.length - 1 && <span className="mx-2 h-[5px] min-w-10 flex-1 rounded-full" style={{ background: LINE_COLORS[index % LINE_COLORS.length] }} aria-hidden />}
         </Fragment>
       ))}
@@ -304,6 +313,9 @@ export function Shell({ children }: { children: ReactNode }) {
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [mobile, setMobile] = useState(false);
   const groups = visibleGroups(user?.role);
+  const approver = user?.role === "admin" || user?.role === "approver";
+  const waiting = useQuery({ queryKey: ["approvals"], queryFn: () => api<unknown[]>("/approvals"), enabled: approver, refetchInterval: 60000 });
+  const pending = waiting.data?.length ?? 0;
   useEffect(() => {
     setMobile(false);
   }, [pathname]);
@@ -312,7 +324,7 @@ export function Shell({ children }: { children: ReactNode }) {
       <header className="sticky top-0 z-30">
         <BoardStrip dark={dark} toggleTheme={toggleTheme} onSearch={() => setPaletteOpen(true)} onMenu={() => setMobile(!mobile)} menuOpen={mobile} />
         <div className="border-b-2 border-edge bg-surface">
-          <LineMap groups={groups} pathname={pathname} />
+          <LineMap groups={groups} pathname={pathname} pending={pending} />
           {mobile && (
             <nav className="max-h-[65vh] overflow-y-auto px-4 py-3 lg:hidden" aria-label="Mobile">
               {groups.map((group, index) => (

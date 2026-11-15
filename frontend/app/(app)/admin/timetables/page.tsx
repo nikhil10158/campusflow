@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FileUp } from "lucide-react";
 import { useRef, useState, type DragEvent } from "react";
 
-import { Badge, Button, Card, Empty, ErrorBox, LoadingRows, Notice, PageHeader, StatusBadge, cx } from "@/components/ui";
+import { Badge, Button, Card, Empty, ErrorBox, LoadingRows, Notice, PageHeader, StatusBadge, cx, ConfirmButton } from "@/components/ui";
 import { api, download } from "@/lib/api";
 import { WEEKDAYS, minToHHMM } from "@/lib/format";
 import { useToasts } from "@/lib/store";
@@ -81,7 +81,7 @@ export default function TimetableImportPage() {
 
   return (
     <>
-      <PageHeader title="Timetable Ingestion" subtitle="CSV lists, Excel grids and PDF grids are parsed, normalised, validated and previewed. Nothing becomes active until an administrator approves the import." />
+      <PageHeader help={["Drop a CSV, Excel grid or PDF. Nothing is changed yet.", "Answer any questions and fix any errors shown.", "Check the differences, then press Approve import. You can roll back later."]} title="Timetable Ingestion" subtitle="CSV lists, Excel grids and PDF grids are parsed, normalised, validated and previewed. Nothing becomes active until an administrator approves the import." />
       <div className="grid gap-4 xl:grid-cols-[1fr_360px]">
         <div className="space-y-4">
           <div
@@ -122,7 +122,7 @@ export default function TimetableImportPage() {
               {[...preview.diff.added.map((a) => `+ ${a.course} ${WEEKDAYS[a.weekday]} ${minToHHMM(a.start_min)} ${a.venue}`), ...preview.diff.removed.map((a) => `- ${a.course} ${WEEKDAYS[a.weekday]} ${minToHHMM(a.start_min)} ${a.venue}`), ...preview.diff.moved.map((m) => `~ ${m.course}: ${WEEKDAYS[m.from.weekday]} ${minToHHMM(m.from.start_min)} ${m.from.venue} → ${WEEKDAYS[m.to.weekday]} ${minToHHMM(m.to.start_min)} ${m.to.venue}`)].slice(0, 20).map((line) => <p key={line} className="font-mono text-xs">{line}</p>)}
               {preview.affected_bookings.length > 0 && <div className="mt-3"><Notice tone="warn">{preview.affected_bookings.length} booking(s) would clash with the new timetable: {preview.affected_bookings.map((b) => `#${b.booking_id} ${b.title}`).join(", ")}</Notice></div>}
               <div className="mt-4 flex items-center gap-2">
-                <Button onClick={() => approve.mutate()} busy={approve.isPending} disabled={!preview.ready_to_import}>Approve import</Button>
+                <ConfirmButton variant="primary" label="Approve import" question="Make this the active timetable?" onConfirm={() => approve.mutate()} busy={approve.isPending} disabled={!preview.ready_to_import} />
                 <Button variant="ghost" onClick={() => setPreview(null)}>Discard</Button>
                 {!preview.ready_to_import && <span className="text-xs text-muted">Answer every question and fix every error first.</span>}
               </div>
@@ -139,7 +139,7 @@ export default function TimetableImportPage() {
                 {versions.data?.map((v) => (
                   <li key={v.id} className="flex items-center justify-between rounded-lg border border-line p-2 text-sm">
                     <span>v{v.id} · {v.source_file}<div className="text-xs text-muted">{v.entries} entries · {v.format}</div></span>
-                    <span className="flex items-center gap-2"><StatusBadge state={v.status} />{v.status === "ARCHIVED" && <Button variant="outline" onClick={() => rollback.mutate(v.id)}>Roll back</Button>}</span>
+                    <span className="flex items-center gap-2"><StatusBadge state={v.status} />{v.status === "ARCHIVED" && <ConfirmButton variant="outline" label="Roll back" question="Restore this version?" onConfirm={() => rollback.mutate(v.id)} />}</span>
                   </li>
                 ))}
               </ul>

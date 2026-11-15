@@ -71,7 +71,7 @@ export default function CohortPage() {
 
   return (
     <>
-      <PageHeader title="Cohort Slot Finder" subtitle="Extra lectures, quizzes and workshops: the AND of every section's free time, then a free room near their home rooms." />
+      <PageHeader help={["Pick the department, semester and sections that must attend.", "Green strips show when every section is free; ranked slots come with free rooms.", "Press Propose on a slot to check the rules, then submit it."]} title="Cohort Slot Finder" subtitle="Extra lectures, quizzes and workshops: the AND of every section's free time, then a free room near their home rooms." />
       <div className="grid gap-4 lg:grid-cols-[320px_1fr]">
         <Card title="Who and when">
           <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); search.mutate(); }}>

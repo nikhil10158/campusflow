@@ -1,7 +1,8 @@
 "use client";
 
-import { AlertTriangle, CheckCircle2, Info, Loader2, X } from "lucide-react";
-import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, SelectHTMLAttributes } from "react";
+import { AlertTriangle, ArrowUpRight, CheckCircle2, HelpCircle, Info, Loader2, X } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from "react";
 
 import { useToasts } from "@/lib/store";
 
@@ -49,8 +50,39 @@ export function stateTone(state: string): Tone {
   return "neutral";
 }
 
+const STATE_HELP: Record<string, string> = {
+  FREE: "Nothing is scheduled in this room at that time.",
+  FREE_RELEASED: "A timetabled class was cancelled or released, so the room is open and bookable.",
+  BUSY: "Something is already scheduled here.",
+  HELD: "Reserved while approvals are pending. It expires if nobody approves in time.",
+  PENDING: "Waiting for an approver to decide.",
+  ESCALATED: "Waited too long, so it was passed to the administrator.",
+  SUBMITTED: "Sent in. All parts are on hold together.",
+  CONFIRMED: "Approved and booked.",
+  PARTIAL: "Some parts of this bundle failed. You choose to accept what is approved, replace a part, or cancel everything.",
+  WAITLISTED: "No room was free, so the request is queued by priority.",
+  EXPIRED: "The hold ran out before everyone approved.",
+  REJECTED: "An approver said no, with a written reason.",
+  CANCELLED: "Cancelled; everything it held was released.",
+  NO_SHOW: "Nobody arrived, so the slots were released.",
+  PROPOSED: "Waiting for a person to approve it.",
+  APPROVED: "A person approved this step.",
+  ACTIVE: "This is the timetable version currently in use.",
+  ARCHIVED: "An older version you can roll back to.",
+  VALID: "The pass is good for this time and place.",
+  WRONG_LOT: "The pass is for a different parking lot.",
+  GHOST_CANDIDATE: "Timetabled, but attendance suggests nobody comes.",
+  NEEDS_ATTENTION: "Questions or errors must be fixed before this can be imported.",
+  READY: "Everything checks out and it can be imported.",
+  IMPORTED: "Already imported.",
+};
+
 export function StatusBadge({ state }: { state: string }) {
-  return <Badge tone={stateTone(state)}>{state.replace(/_/g, " ")}</Badge>;
+  return (
+    <Badge tone={stateTone(state)} title={STATE_HELP[state]}>
+      {state.replace(/_/g, " ")}
+    </Badge>
+  );
 }
 
 export function Card({ title, actions, children, className }: { title?: ReactNode; actions?: ReactNode; children: ReactNode; className?: string }) {
@@ -67,11 +99,50 @@ export function Card({ title, actions, children, className }: { title?: ReactNod
   );
 }
 
-export function PageHeader({ title, subtitle, actions, kicker }: { title: string; subtitle?: string; actions?: ReactNode; kicker?: string }) {
+function HelpPanel({ id, steps }: { id: string; steps: string[] }) {
+  const key = `campusflow-help-${id}`;
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    try {
+      setOpen(window.localStorage.getItem(key) !== "seen");
+    } catch {
+      setOpen(true);
+    }
+  }, [key]);
+  function toggle() {
+    const next = !open;
+    setOpen(next);
+    try {
+      window.localStorage.setItem(key, next ? "open" : "seen");
+    } catch {
+      return;
+    }
+  }
   return (
-    <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
+    <div className="mb-6">
+      <button onClick={toggle} aria-expanded={open} className="flex items-center gap-1.5 font-display text-[15px] font-semibold uppercase tracking-wider text-muted hover:text-ink">
+        <HelpCircle className="h-4 w-4" aria-hidden /> How this works {open ? "−" : "+"}
+      </button>
+      {open && (
+        <ol className="slide mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {steps.map((step, index) => (
+            <li key={step} className="flex gap-3 border border-line bg-surface p-3 text-[15px] leading-snug">
+              <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-edge font-display text-sm font-bold text-bg">{index + 1}</span>
+              {step}
+            </li>
+          ))}
+        </ol>
+      )}
+    </div>
+  );
+}
+
+export function PageHeader({ title, subtitle, actions, kicker, help }: { title: string; subtitle?: string; actions?: ReactNode; kicker?: string; help?: string[] }) {
+  return (
+    <>
+    <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
       <div className="max-w-3xl">
-        <p className="mb-1 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-muted">
+        <p className="mb-1 flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-muted">
           <span className="h-2.5 w-2.5 rounded-full bg-primary ring-2 ring-edge" aria-hidden />
           {kicker ?? "Campusflow"}
         </p>
@@ -83,6 +154,54 @@ export function PageHeader({ title, subtitle, actions, kicker }: { title: string
         {subtitle && <p className="mt-3 max-w-2xl text-[16px] leading-relaxed text-muted">{subtitle}</p>}
       </div>
       {actions}
+    </div>
+    {help && <HelpPanel id={title} steps={help} />}
+    </>
+  );
+}
+
+export function ConfirmButton({ label, question, onConfirm, variant = "danger", busy, disabled }: { label: ReactNode; question: string; onConfirm: () => void; variant?: "primary" | "danger" | "outline"; busy?: boolean; disabled?: boolean }) {
+  const [asking, setAsking] = useState(false);
+  if (!asking) {
+    return (
+      <Button variant={variant} onClick={() => setAsking(true)} busy={busy} disabled={disabled}>
+        {label}
+      </Button>
+    );
+  }
+  return (
+    <span className="slide inline-flex flex-wrap items-center gap-2 border-2 border-edge bg-surface px-2 py-1" role="alertdialog" aria-label={question}>
+      <span className="text-sm font-medium">{question}</span>
+      <Button
+        variant={variant}
+        onClick={() => {
+          setAsking(false);
+          onConfirm();
+        }}
+      >
+        Yes
+      </Button>
+      <Button variant="outline" onClick={() => setAsking(false)}>
+        No
+      </Button>
+    </span>
+  );
+}
+
+export function QuickTiles({ items }: { items: { href: string; title: string; text: string; badge?: ReactNode }[] }) {
+  return (
+    <div className="mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {items.map((item, index) => (
+        <Link key={item.href + item.title} href={item.href} className="group relative flex flex-col justify-between border border-line border-b-4 border-b-edge bg-surface p-4 transition-colors hover:border-b-primary hover:bg-surface2">
+          <span className="mb-1 font-mono text-xs text-muted">0{index + 1}</span>
+          <span className="flex items-center justify-between gap-2 font-display text-2xl font-bold uppercase leading-none tracking-wide">
+            {item.title}
+            <ArrowUpRight className="h-5 w-5 shrink-0 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden />
+          </span>
+          <span className="mt-2 text-[15px] leading-snug text-muted">{item.text}</span>
+          {item.badge && <span className="mt-2">{item.badge}</span>}
+        </Link>
+      ))}
     </div>
   );
 }

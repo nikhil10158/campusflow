@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import { Area, AreaChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 import { ProposalCard } from "@/components/ProposalCard";
-import { Badge, Button, Card, Empty, ErrorBox, Field, Input, LoadingRows, Notice, PageHeader, Select } from "@/components/ui";
+import { Badge, Button, Card, Empty, ErrorBox, Field, Input, LoadingRows, Notice, PageHeader, Select, ConfirmButton } from "@/components/ui";
 import { api } from "@/lib/api";
 import { addDays, fmtDateTime } from "@/lib/format";
 import { useNow, useParkingLots, useVenues } from "@/lib/hooks";
@@ -101,7 +101,7 @@ export default function ParkingPage() {
 
   return (
     <>
-      <PageHeader title="Parking" subtitle="Per-lot, per-vehicle-type capacity every 15 minutes. Ten percent of every lot is a walk-in reserve and is never booked in advance." />
+      <PageHeader help={["Tell the planner how many vehicles, when, and which venue they are visiting.", "It picks the nearest lots with free space; ten percent of every lot is always left for walk-ins.", "Passes (with QR codes) appear after a booking is confirmed."]} title="Parking" subtitle="Per-lot, per-vehicle-type capacity every 15 minutes. Ten percent of every lot is a walk-in reserve and is never booked in advance." />
       <div className="grid gap-4 xl:grid-cols-[360px_1fr]">
         <div className="space-y-4">
           <Card title="Allocation preview">
@@ -144,7 +144,7 @@ export default function ParkingPage() {
                 <div key={p.id} className="rounded-lg border border-line p-2 text-center">
                   <QRCodeSVG value={`${frontend}/pass/${p.token}`} size={96} bgColor="transparent" fgColor="currentColor" className="mx-auto" />
                   <div className="mt-1 text-sm font-medium">{p.plate ?? p.type}</div>
-                  <div className="text-[11px] text-muted">{fmtDateTime(p.valid_from)} → {fmtDateTime(p.valid_to).slice(-5)}</div>
+                  <div className="text-xs text-muted">{fmtDateTime(p.valid_from)} → {fmtDateTime(p.valid_to).slice(-5)}</div>
                   {p.revoked && <Badge tone="bad">revoked</Badge>}
                 </div>
               ))}
@@ -153,7 +153,7 @@ export default function ParkingPage() {
           {staff && (
             <Card title="No-show release proposals">
               {noShows.data?.length === 0 ? <Empty>No parking booking is past the 30-minute grace period without a scan. Advance the demo clock to see one.</Empty> : (
-                <ul className="space-y-2">{noShows.data?.map((n) => <li key={n.booking_id} className="flex items-center justify-between rounded-lg border border-line p-2 text-sm"><span>#{n.booking_id} {n.title} · {n.lot} · started {fmtDateTime(n.start)}</span><Button variant="danger" onClick={() => release.mutate(n.booking_id)} busy={release.isPending}>Release slots</Button></li>)}</ul>
+                <ul className="space-y-2">{noShows.data?.map((n) => <li key={n.booking_id} className="flex items-center justify-between rounded-lg border border-line p-2 text-sm"><span>#{n.booking_id} {n.title} · {n.lot} · started {fmtDateTime(n.start)}</span><ConfirmButton label="Release slots" question="Release these slots as a no-show?" onConfirm={() => release.mutate(n.booking_id)} busy={release.isPending} /></li>)}</ul>
               )}
             </Card>
           )}

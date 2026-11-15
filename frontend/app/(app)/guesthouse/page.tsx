@@ -56,7 +56,7 @@ function OccupancyCalendar({ from }: { from: string }) {
   if (isPending || !data) return <LoadingRows rows={6} />;
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-[760px] border-separate border-spacing-0.5 text-[10px]">
+      <table className="min-w-[760px] border-separate border-spacing-0.5 text-xs">
         <thead>
           <tr>
             <th className="w-20 text-left font-medium text-muted">Room</th>
@@ -159,7 +159,7 @@ export default function GuestHousePage() {
 
   return (
     <>
-      <PageHeader title="MDC Guest House" subtitle="16 rooms. Nights are checked with a 60-minute turnover buffer; guest nights must be linked to a host or an event." actions={manager ? <Button variant="outline" onClick={() => download("/exports/guesthouse/checkin.pdf", "checkin.pdf", { day: from })}><FileDown className="h-4 w-4" /> Check-in sheet</Button> : null} />
+      <PageHeader help={["The calendar shows every room for the next three weeks.", "Search for nights, then Propose a room. A host or event must be named.", "Visiting team? Use group allocation to place everyone in as few rooms as possible."]} title="MDC Guest House" subtitle="16 rooms. Nights are checked with a 60-minute turnover buffer; guest nights must be linked to a host or an event." actions={manager ? <Button variant="outline" onClick={() => download("/exports/guesthouse/checkin.pdf", "checkin.pdf", { day: from })}><FileDown className="h-4 w-4" /> Check-in sheet</Button> : null} />
       <div className="grid gap-4 xl:grid-cols-2">
         <Card title="Occupancy · next 3 weeks"><OccupancyCalendar from={today} /></Card>
         <Card title="Find a room">

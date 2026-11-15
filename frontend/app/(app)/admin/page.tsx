@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useState } from "react";
 
-import { Badge, Button, Card, ErrorBox, Input, LoadingRows, Notice, PageHeader, Stat } from "@/components/ui";
+import { Badge, Button, Card, ErrorBox, Input, LoadingRows, Notice, PageHeader, Stat, ConfirmButton, QuickTiles } from "@/components/ui";
 import { api } from "@/lib/api";
 import { fmtDateTime, isoLocal } from "@/lib/format";
 import { useNow } from "@/lib/hooks";
@@ -54,6 +54,12 @@ export default function AdminHome() {
   return (
     <>
       <PageHeader title="Command Center" subtitle="Everything time-based follows the demo clock, so holds, escalations and no-shows can be shown on demand." />
+      <QuickTiles items={[
+        { href: "/", title: "Ask the planner", text: "Describe an event or a room need in one sentence." },
+        { href: "/approvals", title: "Approvals", text: "Decisions waiting for you.", badge: inbox.data?.length ? <Badge tone="warn">{inbox.data.length} waiting</Badge> : undefined },
+        { href: "/admin/timetables", title: "Import timetable", text: "Upload a CSV, Excel or PDF and review changes." },
+        { href: "/admin/reports", title: "Ghost classes", text: "Free rooms nobody is using." },
+      ]} />
       {kpis.isPending ? <LoadingRows rows={2} /> : kpis.isError ? <ErrorBox error={kpis.error} /> : (
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
           <Stat label="Classroom utilisation" value={`${kpis.data.classroom_time_utilisation_pct}%`} />
@@ -70,7 +76,7 @@ export default function AdminHome() {
             {[[12, "+12 h"], [24, "+1 day"], [72, "+3 days"]].map(([h, label]) => <Button key={label} variant="outline" onClick={() => shift(Number(h))} busy={setClock.isPending}>{label}</Button>)}
           </div>
           <div className="mt-3 flex gap-2"><Input type="datetime-local" value={custom} onChange={(e) => setCustom(e.target.value)} aria-label="Custom demo time" /><Button onClick={() => custom && setClock.mutate(`${custom}:00`.slice(0, 19))} disabled={!custom}>Set</Button></div>
-          <div className="mt-3"><Button variant="danger" onClick={() => reset.mutate()} busy={reset.isPending}>Reset demo data</Button></div>
+          <div className="mt-3"><ConfirmButton label="Reset demo data" question="Restore the original demo data?" onConfirm={() => reset.mutate()} busy={reset.isPending} /></div>
         </Card>
         <Card title="Alerts">
           <ul className="space-y-2 text-sm">

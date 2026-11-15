@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CheckCircle2, Circle, Clock, XCircle } from "lucide-react";
 import { use } from "react";
 
-import { Badge, Button, Card, ErrorBox, LoadingRows, Notice, PageHeader, StatusBadge, cx } from "@/components/ui";
+import { Badge, Button, Card, ErrorBox, LoadingRows, Notice, PageHeader, StatusBadge, cx, ConfirmButton } from "@/components/ui";
 import { api } from "@/lib/api";
 import { fmtDateTime } from "@/lib/format";
 import { useToasts } from "@/lib/store";
@@ -100,7 +100,7 @@ export default function BundlePage({ params }: { params: Promise<{ id: string }>
       {!finished && (
         <div className="mt-4 flex flex-wrap gap-2">
           {bundle.status === "PARTIAL" && <Button onClick={() => accept.mutate()} busy={accept.isPending}>Accept partial</Button>}
-          <Button variant="danger" onClick={() => cancel.mutate()} busy={cancel.isPending}>Cancel all (releases every hold)</Button>
+          <ConfirmButton label="Cancel all (releases every hold)" question="Release every part of this bundle?" onConfirm={() => cancel.mutate()} busy={cancel.isPending} />
         </div>
       )}
     </>

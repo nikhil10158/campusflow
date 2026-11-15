@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { ProposalCard } from "@/components/ProposalCard";
-import { Button, Card, Empty, ErrorBox, Field, Input, LoadingRows, Notice, PageHeader, Select, StatusBadge } from "@/components/ui";
+import { Button, Card, Empty, ErrorBox, Field, Input, LoadingRows, Notice, PageHeader, Select, StatusBadge, QuickTiles } from "@/components/ui";
 import { api } from "@/lib/api";
 import { addDays, fmtDateTime } from "@/lib/format";
 import { useNow, useVenues } from "@/lib/hooks";
@@ -48,6 +48,12 @@ export default function StudentPage() {
   return (
     <>
       <PageHeader title="My requests" subtitle="Clubs request rooms through a faculty sponsor. You only ever see your own bookings." actions={<Link href="/find" className="text-sm text-primary underline">See free rooms</Link>} />
+      <QuickTiles items={[
+        { href: "/", title: "Ask the planner", text: "Describe what your club needs." },
+        { href: "/find", title: "Find a room", text: "See which rooms are free and when." },
+        { href: "/timetable", title: "Timetables", text: "Check a section's week before you ask." },
+        { href: "/policies", title: "Rules", text: "What students may book, with the rule cited." },
+      ]} />
       <div className="grid gap-4 lg:grid-cols-2">
         <Card title="Club room request">
           <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); check.mutate(); }}>

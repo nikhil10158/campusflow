@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 
 import { CampusMap } from "@/components/CampusMap";
-import { Badge, Button, Card, Empty, ErrorBox, Field, Input, LoadingRows, Notice, PageHeader, Select, StatusBadge } from "@/components/ui";
+import { Badge, Button, Card, Empty, ErrorBox, Field, Input, LoadingRows, Notice, PageHeader, Select, StatusBadge, ConfirmButton } from "@/components/ui";
 import { api } from "@/lib/api";
 import { addDays, fmtDateTime } from "@/lib/format";
 import { useBuildings, useNow } from "@/lib/hooks";
@@ -67,7 +67,7 @@ function Body() {
 
   return (
     <>
-      <PageHeader title="Disruption Center" subtitle="Close a building and see every class and booking it breaks with conflict-free re-home proposals. Nothing changes until you approve the whole plan." />
+      <PageHeader help={["Choose what closed and for which days, then press Assess.", "Every affected class and booking gets a conflict-free new place where one exists.", "Approve the plan to apply it; people are notified (mock)."]} title="Disruption Center" subtitle="Close a building and see every class and booking it breaks with conflict-free re-home proposals. Nothing changes until you approve the whole plan." />
       <div className="grid gap-4 xl:grid-cols-[360px_1fr]">
         <div className="space-y-4">
           <Card title="What happened?">
@@ -89,7 +89,7 @@ function Body() {
             <>
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex gap-2"><Badge tone="warn">{shown.affected} affected</Badge><Badge tone="good">{shown.resolved} re-homed</Badge><Badge tone={shown.unresolved ? "bad" : "good"}>{shown.unresolved} need a manual decision</Badge>{shown.status && <StatusBadge state={shown.status} />}</div>
-                <Button onClick={() => apply.mutate()} busy={apply.isPending} disabled={shown.status === "APPLIED"}>Approve and apply plan</Button>
+                <ConfirmButton variant="primary" label="Approve and apply plan" question="Apply every re-home change?" onConfirm={() => apply.mutate()} busy={apply.isPending} disabled={shown.status === "APPLIED"} />
               </div>
               {shown.unresolved > 0 && <Notice tone="warn">Items without a proposal have no conflict-free alternative right now. Resolve them by hand or widen the options.</Notice>}
               <ul className="space-y-2">

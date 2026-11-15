@@ -3,7 +3,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 
-import { Badge, Button, Card, Empty, LoadingRows, PageHeader, StatusBadge } from "@/components/ui";
+import { Badge, Button, Card, Empty, LoadingRows, PageHeader, StatusBadge, QuickTiles } from "@/components/ui";
 import { api } from "@/lib/api";
 import { WEEKDAYS, addDays, fmtDateTime, minToHHMM, weekdayOf } from "@/lib/format";
 import { useNow } from "@/lib/hooks";
@@ -61,6 +61,12 @@ export default function FacultyPage() {
   return (
     <>
       <PageHeader title={`Hello, ${user?.name ?? ""}`} subtitle="Today's classes, release proposals for slots you will not use, and your own booking requests." actions={<Link href="/find" className="text-sm text-primary underline">Quick room finder</Link>} />
+      <QuickTiles items={[
+        { href: "/", title: "Ask the planner", text: "Plan a workshop, quiz or event in one sentence." },
+        { href: "/find", title: "Find a room", text: "See what is free right now, with reasons." },
+        { href: "/cohort", title: "Common slot", text: "Find a time when all your sections are free." },
+        { href: "/labs", title: "Book a lab", text: "Eligibility and safety rules are checked for you." },
+      ]} />
       <div className="grid gap-4 lg:grid-cols-2">
         <Card title={`Today (${WEEKDAYS[weekday]} ${today})`}>
           {mine.isPending ? <LoadingRows rows={3} /> : todays.length === 0 ? <Empty>No classes today.</Empty> : (
