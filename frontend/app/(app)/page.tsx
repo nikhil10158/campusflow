@@ -159,8 +159,8 @@ export default function Concierge() {
   return (
     <>
       <div className="mx-auto max-w-3xl pb-6 pt-2 text-center">
-        <span className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-2xl bg-goodbg text-primary">
-          <Sparkles className="h-6 w-6" aria-hidden />
+        <span className="drift mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-primary text-primaryink shadow-lift">
+          <Sparkles className="h-7 w-7" aria-hidden />
         </span>
         <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">What do you need?</h1>
         <p className="mt-3 text-lg text-muted">Describe it in your own words. The assistant finds free rooms, guest rooms and parking, checks the rules, and prepares a request for you to review.</p>
@@ -171,7 +171,7 @@ export default function Concierge() {
           event.preventDefault();
           send();
         }}
-        className="mx-auto flex max-w-3xl items-center gap-2 rounded-2xl border border-edge bg-surface p-2 shadow-md focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/25"
+        className="mx-auto flex max-w-3xl items-center gap-2 rounded-2xl border border-edge bg-surface p-2 shadow-lift transition duration-200 focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/15"
       >
         <input
           id="ask"
@@ -186,7 +186,7 @@ export default function Concierge() {
         <button type="button" onClick={listen} aria-label="Speak your request" className={cx("grid h-11 w-11 place-items-center rounded-xl text-muted hover:bg-surface2", listening && "bg-goodbg text-primary")}>
           <Mic className="h-5 w-5" />
         </button>
-        <button type="submit" disabled={busy || !input.trim()} aria-label="Send" className="grid h-11 w-11 place-items-center rounded-xl bg-primary text-primaryink hover:brightness-110 disabled:opacity-40">
+        <button type="submit" disabled={busy || !input.trim()} aria-label="Send" className="grid h-11 w-11 place-items-center rounded-xl bg-primary text-primaryink transition duration-150 hover:scale-105 hover:brightness-110 active:scale-95 disabled:opacity-40 disabled:hover:scale-100">
           {busy ? <Loader2 className="h-5 w-5 animate-spin" /> : <ArrowUp className="h-5 w-5" />}
         </button>
       </form>
@@ -202,9 +202,9 @@ export default function Concierge() {
       {!started && (
         <div className="mx-auto mt-8 max-w-3xl">
           <p className="mb-3 text-sm font-semibold text-muted">Try one of these</p>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="stagger grid gap-3 sm:grid-cols-2">
             {EXAMPLES.map((example) => (
-              <button key={example.text} onClick={() => run(example.text)} className="rounded-xl border border-line bg-surface p-4 text-left transition hover:border-primary hover:shadow-md">
+              <button key={example.text} onClick={() => run(example.text)} className="rounded-xl border border-line bg-surface p-4 text-left shadow-card transition duration-200 hover:-translate-y-1 hover:border-primary hover:shadow-lift active:scale-[0.98]">
                 <span className="block font-semibold">{example.title}</span>
                 <span className="mt-1 block text-[15px] leading-snug text-muted">{example.text}</span>
               </button>
@@ -248,7 +248,7 @@ export default function Concierge() {
                   const call = visibleSteps[index];
                   return (
                     <li key={step} className="flex gap-3">
-                      {complete ? <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-good" aria-hidden /> : <Circle className="mt-0.5 h-5 w-5 shrink-0 text-edge" aria-hidden />}
+                      {complete ? <CheckCircle2 className="tick-in mt-0.5 h-5 w-5 shrink-0 text-good" aria-hidden /> : <Circle className="mt-0.5 h-5 w-5 shrink-0 text-edge" aria-hidden />}
                       <div className="min-w-0 flex-1">
                         <p className={cx("font-medium", !complete && "text-muted")}>{step}</p>
                         {call && (
@@ -267,7 +267,7 @@ export default function Concierge() {
                 })}
                 {verify && (
                   <li className="flex gap-3">
-                    {verify.policy.ok && verify.validator.ok ? <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-good" aria-hidden /> : <XCircle className="mt-0.5 h-5 w-5 shrink-0 text-bad" aria-hidden />}
+                    {verify.policy.ok && verify.validator.ok ? <CheckCircle2 className="tick-in mt-0.5 h-5 w-5 shrink-0 text-good" aria-hidden /> : <XCircle className="mt-0.5 h-5 w-5 shrink-0 text-bad" aria-hidden />}
                     <div>
                       <p className="font-medium">Checked twice, without AI</p>
                       <div className="mt-1 flex flex-wrap gap-2">

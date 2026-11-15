@@ -60,19 +60,28 @@ export default function LoginPage() {
     <div className="min-h-screen">
       <div className="mx-auto grid min-h-screen max-w-6xl content-center gap-10 px-5 py-10 lg:grid-cols-[1.35fr_1fr]">
         <section>
-          <div className="mb-6 flex items-center gap-3">
-            <span className="grid h-11 w-11 place-items-center rounded-xl bg-primary text-primaryink">
+          <div className="card-in mb-6 flex items-center gap-3">
+            <span className="drift grid h-11 w-11 place-items-center rounded-xl bg-primary text-primaryink shadow-lift">
               <MapPin className="h-6 w-6" aria-hidden />
             </span>
-            <span className="text-2xl font-semibold tracking-tight">CampusFlow</span>
+            <span className="font-display text-2xl font-semibold tracking-tight">CampusFlow</span>
           </div>
-          <h1 className="max-w-xl text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">Find and book campus spaces without the back-and-forth.</h1>
-          <p className="mt-4 max-w-xl text-lg leading-relaxed text-muted">Rooms, labs, guest rooms and parking in one place. Ask in plain words, see what is really free, and let the right people approve.</p>
+          <h1 className="card-in max-w-xl text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
+            Find and book campus spaces without the{" "}
+            <span className="relative inline-block whitespace-nowrap text-primary">
+              back-and-forth
+              <svg className="underline-draw absolute -bottom-2 left-0 h-3 w-full" viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden>
+                <path d="M2 8 C 40 2, 90 12, 130 6 S 185 4, 198 7" fill="none" stroke="var(--accent)" strokeWidth="3.5" strokeLinecap="round" />
+              </svg>
+            </span>
+            .
+          </h1>
+          <p className="card-in mt-5 max-w-xl text-lg leading-relaxed text-muted">Rooms, labs, guest rooms and parking in one place. Ask in plain words, see what is really free, and let the right people approve.</p>
           <h2 className="mb-3 mt-8 text-sm font-semibold uppercase tracking-wide text-muted">Try the demo as…</h2>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="stagger grid gap-3 sm:grid-cols-2">
             {ROLES.map((role) => (
-              <button key={role.account} disabled={busy} onClick={() => submit(`${role.account}@jklu.demo`)} className="group flex items-start gap-3 rounded-xl border border-line bg-surface p-3.5 text-left transition hover:border-primary hover:shadow-md disabled:opacity-50">
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-goodbg text-primary">
+              <button key={role.account} disabled={busy} onClick={() => submit(`${role.account}@jklu.demo`)} className="group flex items-start gap-3 rounded-xl border border-line bg-surface p-3.5 text-left shadow-card transition duration-200 hover:-translate-y-1 hover:border-primary hover:shadow-lift active:scale-[0.98] disabled:opacity-50">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-goodbg text-primary transition duration-200 group-hover:rotate-[-6deg] group-hover:scale-110 group-hover:bg-primary group-hover:text-primaryink">
                   <role.icon className="h-5 w-5" aria-hidden />
                 </span>
                 <span>
@@ -84,7 +93,7 @@ export default function LoginPage() {
           </div>
         </section>
 
-        <section className="self-center rounded-2xl border border-line bg-surface p-7 shadow-sm">
+        <section className="card-in self-center rounded-2xl border border-line border-t-4 border-t-primary bg-surface p-7 shadow-lift" style={{ animationDelay: "0.2s" }}>
           <h2 className="text-2xl font-semibold">Sign in</h2>
           <p className="mb-5 mt-1 text-[15px] text-muted">Pick a role on the left, or enter an account here.</p>
           <form onSubmit={onSubmit} className="space-y-4">

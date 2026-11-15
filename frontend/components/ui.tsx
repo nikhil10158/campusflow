@@ -35,7 +35,7 @@ const DOT: Record<Tone, string> = {
 export function Badge({ tone = "neutral", children, title }: { tone?: Tone; children: ReactNode; title?: string }) {
   return (
     <span title={title} className={cx("inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-0.5 text-[13px] font-medium", TONES[tone])}>
-      <span className={cx("h-1.5 w-1.5 rounded-full", DOT[tone])} aria-hidden />
+      <span className={cx("h-1.5 w-1.5 rounded-full", DOT[tone], tone === "warn" && "dot-beat")} aria-hidden />
       {children}
     </span>
   );
@@ -118,7 +118,7 @@ export function StatusBadge({ state }: { state: string }) {
 
 export function Card({ title, actions, children, className }: { title?: ReactNode; actions?: ReactNode; children: ReactNode; className?: string }) {
   return (
-    <section className={cx("rounded-2xl border border-line bg-surface shadow-[0_1px_2px_rgba(20,40,28,0.05)]", className)}>
+    <section className={cx("card-in rounded-2xl border border-line bg-surface shadow-card", className)}>
       {(title || actions) && (
         <header className="flex flex-wrap items-center justify-between gap-2 px-5 pt-4">
           {title && <h2 className="text-[17px] font-semibold tracking-tight">{title}</h2>}
@@ -155,10 +155,10 @@ function HelpPanel({ id, steps }: { id: string; steps: string[] }) {
         <HelpCircle className="h-4 w-4" aria-hidden /> {open ? "Hide quick guide" : "Show quick guide"}
       </button>
       {open && (
-        <ol className="slide mt-2 grid gap-3 sm:grid-cols-3">
+        <ol className="stagger mt-2 grid gap-3 sm:grid-cols-3">
           {steps.map((step, index) => (
-            <li key={step} className="flex gap-3 rounded-xl bg-surface2 p-4 text-[15px] leading-snug">
-              <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-primary text-sm font-semibold text-primaryink">{index + 1}</span>
+            <li key={step} className="flex gap-3 rounded-xl border border-line bg-surface p-4 text-[15px] leading-snug shadow-card">
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-primary text-sm font-semibold text-primaryink">{index + 1}</span>
               {step}
             </li>
           ))}
@@ -173,6 +173,7 @@ export function PageHeader({ title, subtitle, actions, help }: { title: string; 
     <>
       <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
         <div className="max-w-3xl">
+          <span className="accent-bar mb-3 block h-1.5 w-12 rounded-full bg-accent" aria-hidden />
           <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h1>
           {subtitle && <p className="mt-2 max-w-2xl text-[17px] leading-relaxed text-muted">{subtitle}</p>}
         </div>
@@ -190,16 +191,16 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 export function Button({ variant = "primary", busy, className, children, disabled, ...rest }: ButtonProps) {
   const styles = {
-    primary: "bg-primary text-primaryink hover:brightness-110 shadow-sm",
-    outline: "border border-edge bg-surface text-ink hover:bg-surface2",
-    danger: "bg-bad text-white hover:brightness-110",
+    primary: "bg-primary text-primaryink shadow-card hover:-translate-y-px hover:brightness-110 hover:shadow-lift",
+    outline: "border border-edge bg-surface text-ink hover:-translate-y-px hover:border-primary hover:bg-surface2",
+    danger: "bg-bad text-white shadow-card hover:-translate-y-px hover:brightness-110",
     ghost: "text-ink hover:bg-surface2",
   }[variant];
   return (
     <button
       {...rest}
       disabled={disabled || busy}
-      className={cx("inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-[15px] font-medium transition disabled:cursor-not-allowed disabled:opacity-45 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary", styles, className)}
+      className={cx("inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-[15px] font-medium transition duration-150 active:translate-y-0 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:translate-y-0", styles, className)}
     >
       {busy && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
       {children}
@@ -237,11 +238,11 @@ export function ConfirmButton({ label, question, onConfirm, variant = "danger", 
 
 export function QuickTiles({ items }: { items: { href: string; title: string; text: string; icon?: ComponentType<{ className?: string }>; badge?: ReactNode }[] }) {
   return (
-    <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="stagger mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {items.map((item) => (
-        <Link key={item.href + item.title} href={item.href} className="group flex flex-col rounded-2xl border border-line bg-surface p-5 shadow-[0_1px_2px_rgba(20,40,28,0.05)] transition hover:border-primary hover:shadow-md">
+        <Link key={item.href + item.title} href={item.href} className="group flex flex-col rounded-2xl border border-line bg-surface p-5 shadow-card transition duration-200 hover:-translate-y-1 hover:border-primary hover:shadow-lift">
           {item.icon && (
-            <span className="mb-3 grid h-10 w-10 place-items-center rounded-xl bg-goodbg text-primary">
+            <span className="mb-3 grid h-11 w-11 place-items-center rounded-xl bg-goodbg text-primary transition duration-200 group-hover:rotate-[-6deg] group-hover:scale-110 group-hover:bg-primary group-hover:text-primaryink">
               <item.icon className="h-5 w-5" />
             </span>
           )}
@@ -267,7 +268,7 @@ export function Field({ label, children, hint }: { label: string; children: Reac
   );
 }
 
-const INPUT = "w-full rounded-lg border border-edge bg-surface px-3 py-2 text-[15px] font-normal text-ink outline-none placeholder:text-muted/70 focus:border-primary focus:ring-2 focus:ring-primary/25";
+const INPUT = "w-full rounded-lg border border-edge bg-surface px-3 py-2 text-[15px] font-normal text-ink outline-none transition duration-150 placeholder:text-muted/70 hover:border-primary/60 focus:border-primary focus:ring-4 focus:ring-primary/15";
 
 export function Input(props: InputHTMLAttributes<HTMLInputElement>) {
   return <input {...props} className={cx(INPUT, props.className)} />;
@@ -315,7 +316,7 @@ export function Toasts() {
   return (
     <div className="pointer-events-none fixed bottom-4 right-4 z-50 flex w-80 max-w-[calc(100vw-2rem)] flex-col gap-2" aria-live="polite">
       {toasts.map((toast) => (
-        <div key={toast.id} className={cx("slide pointer-events-auto flex items-start justify-between gap-2 rounded-xl border border-line bg-surface p-3.5 text-[15px] shadow-lg", toast.tone === "bad" ? "border-l-4 border-l-bad" : toast.tone === "good" ? "border-l-4 border-l-good" : "border-l-4 border-l-info")}>
+        <div key={toast.id} className={cx("toast-in pointer-events-auto flex items-start justify-between gap-2 rounded-xl border border-line bg-surface p-3.5 text-[15px] shadow-lg", toast.tone === "bad" ? "border-l-4 border-l-bad" : toast.tone === "good" ? "border-l-4 border-l-good" : "border-l-4 border-l-info")}>
           <span>{toast.text}</span>
           <button onClick={() => dismiss(toast.id)} aria-label="Dismiss" className="shrink-0 text-muted hover:text-ink">
             <X className="h-4 w-4" />
@@ -329,8 +330,8 @@ export function Toasts() {
 export function Drawer({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: ReactNode }) {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-40 flex justify-end bg-black/40" onClick={onClose}>
-      <aside className="slide h-full w-full max-w-md overflow-y-auto bg-surface p-6 shadow-2xl" onClick={(e) => e.stopPropagation()} role="dialog" aria-label={title}>
+    <div className="fade-in fixed inset-0 z-40 flex justify-end bg-[rgba(6,24,18,0.4)] backdrop-blur-[2px]" onClick={onClose}>
+      <aside className="drawer-in h-full w-full max-w-md overflow-y-auto bg-surface p-6 shadow-2xl" onClick={(e) => e.stopPropagation()} role="dialog" aria-label={title}>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-semibold">{title}</h2>
           <button onClick={onClose} aria-label="Close" className="rounded-lg p-1.5 hover:bg-surface2">
@@ -343,11 +344,30 @@ export function Drawer({ open, onClose, title, children }: { open: boolean; onCl
   );
 }
 
+function CountUp({ value }: { value: number }) {
+  const [shown, setShown] = useState(0);
+  useEffect(() => {
+    const started = performance.now();
+    let frame = 0;
+    const step = (now: number) => {
+      const progress = Math.min((now - started) / 700, 1);
+      setShown(Math.round(value * (1 - Math.pow(1 - progress, 3))));
+      if (progress < 1) frame = requestAnimationFrame(step);
+    };
+    frame = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frame);
+  }, [value]);
+  return <>{shown}</>;
+}
+
 export function Stat({ label, value, tone }: { label: string; value: ReactNode; tone?: Tone }) {
   return (
-    <div className="rounded-2xl border border-line bg-surface p-4 shadow-[0_1px_2px_rgba(20,40,28,0.05)]">
-      <div className="text-sm text-muted">{label}</div>
-      <div className={cx("mt-1 text-3xl font-semibold tabular-nums tracking-tight", tone === "bad" && "text-bad", tone === "good" && "text-good", tone === "warn" && "text-warn")}>{value}</div>
+    <div className="card-in relative overflow-hidden rounded-2xl border border-line bg-surface p-4 shadow-card transition duration-200 hover:-translate-y-0.5 hover:shadow-lift">
+      <span className={cx("absolute inset-y-0 left-0 w-1", tone === "bad" ? "bg-bad" : tone === "warn" ? "bg-warn" : tone === "good" ? "bg-good" : "bg-primary")} aria-hidden />
+      <div className="pl-1 text-sm text-muted">{label}</div>
+      <div className={cx("mt-1 pl-1 font-display text-3xl font-semibold tabular-nums tracking-tight", tone === "bad" && "text-bad", tone === "good" && "text-good", tone === "warn" && "text-warn")}>
+        {typeof value === "number" && Number.isInteger(value) ? <CountUp value={value} /> : value}
+      </div>
     </div>
   );
 }

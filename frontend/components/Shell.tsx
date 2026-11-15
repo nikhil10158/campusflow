@@ -132,11 +132,11 @@ function useTheme(): [boolean, () => void] {
 
 function Logo() {
   return (
-    <Link href="/" className="flex shrink-0 items-center gap-2.5" aria-label="CampusFlow home">
-      <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-primaryink">
+    <Link href="/" className="group flex shrink-0 items-center gap-2.5" aria-label="CampusFlow home">
+      <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-primaryink transition duration-300 group-hover:rotate-[-8deg] group-hover:scale-110">
         <MapPin className="h-5 w-5" aria-hidden />
       </span>
-      <span className="text-lg font-semibold tracking-tight">CampusFlow</span>
+      <span className="font-display text-xl font-semibold tracking-tight">CampusFlow</span>
     </Link>
   );
 }
@@ -163,9 +163,9 @@ function NavLink({ group, pathname, badge }: { group: NavGroup; pathname: string
       window.removeEventListener("keydown", close);
     };
   }, [open]);
-  const classes = cx("flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-[15px] font-medium transition-colors", active ? "bg-goodbg text-primary" : "text-ink hover:bg-surface2");
+  const classes = cx("flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-[15px] font-medium transition duration-150", active ? "bg-goodbg text-primary" : "text-ink hover:bg-surface2");
   const badgeNode = badge ? (
-    <span className="grid min-w-5 place-items-center rounded-full bg-bad px-1.5 text-xs font-semibold leading-5 text-white" aria-label={`${badge} waiting`}>
+    <span className="grid min-w-5 place-items-center rounded-full bg-accent px-1.5 text-xs font-semibold leading-5 text-white" aria-label={`${badge} waiting`}>
       {badge}
     </span>
   ) : null;
@@ -195,12 +195,12 @@ function NavLink({ group, pathname, badge }: { group: NavGroup; pathname: string
         <ChevronDown className={cx("h-3.5 w-3.5 transition-transform", open && "rotate-180")} aria-hidden />
       </button>
       {open && (
-        <div className="slide absolute left-0 top-full z-40 w-80 pt-1">
-          <ul className="overflow-hidden rounded-xl border border-line bg-surface p-1.5 shadow-xl">
+        <div className="pop absolute left-0 top-full z-40 w-80 pt-1">
+          <ul className="overflow-hidden rounded-xl border border-line bg-surface p-1.5 shadow-lift">
             {group.items.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} className={cx("flex items-start gap-3 rounded-lg px-3 py-2.5 hover:bg-surface2", isActive(pathname, item.href) && "bg-goodbg")}>
-                  <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-surface2 text-primary">
+                <Link href={item.href} className={cx("group/item flex items-start gap-3 rounded-lg px-3 py-2.5 transition duration-150 hover:translate-x-0.5 hover:bg-surface2", isActive(pathname, item.href) && "bg-goodbg")}>
+                  <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-surface2 text-primary transition duration-150 group-hover/item:scale-110">
                     <item.icon className="h-4 w-4" aria-hidden />
                   </span>
                   <span>
@@ -257,7 +257,7 @@ function UserMenu({ dark, toggleTheme }: { dark: boolean; toggleTheme: () => voi
         <span className="hidden text-sm font-medium sm:block">{user?.name}</span>
       </button>
       {open && (
-        <div className="slide absolute right-0 top-full z-40 mt-2 w-60 overflow-hidden rounded-xl border border-line bg-surface p-1.5 shadow-xl">
+        <div className="pop absolute right-0 top-full z-40 mt-2 w-60 overflow-hidden rounded-xl border border-line bg-surface p-1.5 shadow-lift">
           <div className="border-b border-line px-3 pb-2 pt-1.5">
             <p className="font-medium">{user?.name}</p>
             <p className="text-sm capitalize text-muted">{user?.role}</p>
@@ -293,7 +293,7 @@ function Palette({ groups, open, setOpen }: { groups: NavGroup[]; open: boolean;
     return () => window.removeEventListener("keydown", handler);
   }, [open, setOpen]);
   return (
-    <Command.Dialog open={open} onOpenChange={setOpen} label="Go to page" className="fixed left-1/2 top-24 z-50 w-[min(34rem,92vw)] -translate-x-1/2 overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl">
+    <Command.Dialog open={open} onOpenChange={setOpen} label="Go to page" className="fixed left-1/2 top-24 z-50 w-[min(34rem,92vw)] -translate-x-1/2 overflow-hidden rounded-2xl border border-line bg-surface shadow-lift">
       <Command.Input placeholder="Search pages…" className="w-full border-b border-line bg-transparent px-5 py-4 text-base outline-none" />
       <Command.List className="max-h-80 overflow-y-auto p-2">
         <Command.Empty className="p-3 text-sm text-muted">No page matches</Command.Empty>
@@ -332,7 +332,7 @@ export function Shell({ children }: { children: ReactNode }) {
   }, [pathname]);
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-30 border-b border-line bg-surface/95 backdrop-blur">
+      <header className="topbar sticky top-0 z-30 border-b border-line">
         <div className="mx-auto flex max-w-[1400px] items-center gap-4 px-4 py-2.5">
           <Logo />
           <nav className="ml-2 hidden items-center gap-0.5 xl:flex" aria-label="Main">

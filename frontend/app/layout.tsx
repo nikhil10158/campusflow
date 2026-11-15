@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { DM_Sans } from "next/font/google";
+import { Bricolage_Grotesque, DM_Sans } from "next/font/google";
 
 import { Providers } from "@/components/Providers";
 
 import "./globals.css";
 
 const dmSans = DM_Sans({ variable: "--font-dm-sans", subsets: ["latin"] });
+const bricolage = Bricolage_Grotesque({ variable: "--font-bricolage", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "CampusFlow",
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${dmSans.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang="en" className={`${dmSans.variable} ${bricolage.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="min-h-full">
         <Providers>{children}</Providers>
       </body>
