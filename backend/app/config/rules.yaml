@@ -1,0 +1,104 @@
+timezone: Asia/Kolkata
+slot_minutes: 15
+bookable_hours:
+  start: "07:00"
+  end: "22:00"
+lunch:
+  start: "13:00"
+  end: "14:00"
+periods:
+  - ["09:00", "09:55"]
+  - ["10:00", "10:55"]
+  - ["11:00", "11:55"]
+  - ["12:00", "12:55"]
+  - ["14:00", "14:55"]
+  - ["15:00", "15:55"]
+  - ["16:00", "16:55"]
+fire_safety_cap_pct: 100
+hold_ttl_hours: 24
+escalation_after_hours: 12
+no_show_grace_min: 30
+walkin_reserve_pct: 10
+ghost:
+  threshold: 0.25
+  min_low_occurrences: 3
+  window_occurrences: 4
+resources:
+  classroom:
+    lead_time_hours: 24
+    max_advance_days: 60
+    max_duration_min: 180
+    setup_buffer_min: 0
+    teardown_buffer_min: 0
+    min_fill_ratio: 0.4
+    approval_chain: [admin_office]
+  seminar_hall:
+    lead_time_hours: 24
+    max_advance_days: 60
+    max_duration_min: 240
+    setup_buffer_min: 15
+    teardown_buffer_min: 15
+    min_fill_ratio: 0.4
+    approval_chain: [admin_office]
+  lab:
+    lead_time_hours: 48
+    max_advance_days: 30
+    max_duration_min: 180
+    setup_buffer_min: 0
+    teardown_buffer_min: 0
+    min_fill_ratio: 0.5
+    approval_chain: [lab_incharge, hod]
+  amphitheatre:
+    lead_time_hours: 72
+    max_advance_days: 90
+    max_duration_min: 480
+    setup_buffer_min: 30
+    teardown_buffer_min: 30
+    min_fill_ratio: 0.5
+    dean_approval_above_attendees: 100
+    approval_chain: [estate, dean_if_large]
+  guest_room:
+    lead_time_hours: 24
+    max_advance_days: 120
+    max_stay_nights: 5
+    turnover_buffer_min: 60
+    checkin_time: "14:00"
+    checkout_time: "11:00"
+    approval_chain: [guesthouse_mgr]
+  parking:
+    lead_time_hours: 12
+    max_advance_days: 30
+    approval_chain: [parking_officer]
+priority_classes:
+  vip: 1
+  official: 2
+  faculty_guest: 3
+  other: 4
+bundles:
+  parking_suggest_attendees: 50
+  evening_after: "18:00"
+alternatives:
+  max_time_shift_min: 180
+  max_day_shift: 3
+  shift_time_per_15min: 2
+  shift_day_per_day: 10
+  other_venue: 5
+  other_building: 8
+  substitute_type: 12
+  drop_feature: 6
+  shorten_per_15min: 4
+  split_venues: 15
+search_weights:
+  capacity_fit: 40
+  features: 20
+  distance: 20
+  warnings: 10
+  released_penalty: 5
+  ideal_fill_low: 0.7
+  ideal_fill_high: 0.95
+cohort_weights:
+  lunch_penalty: 30
+  late_penalty: 20
+  gap_penalty_per_hour: 10
+  distance_per_min: 1
+  late_after: "17:00"
