@@ -14,6 +14,7 @@ import { api } from "@/lib/api";
 import { useAuth, type User } from "@/lib/store";
 import type { AgentStatus } from "@/lib/types";
 
+import { ThemeToggle, useTheme } from "./ThemeToggle";
 import { Toasts, cx } from "./ui";
 
 type Role = User["role"];
@@ -104,32 +105,6 @@ function isActive(pathname: string, href: string): boolean {
   return pathname === href || (href !== "/admin" && pathname.startsWith(`${href}/`));
 }
 
-function useTheme(): [boolean, () => void] {
-  const [dark, setDark] = useState(false);
-  useEffect(() => {
-    let stored: string | null = null;
-    try {
-      stored = window.localStorage.getItem("campusflow-theme");
-    } catch {
-      stored = null;
-    }
-    const value = stored ? stored === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
-    setDark(value);
-    document.documentElement.classList.toggle("dark", value);
-  }, []);
-  const toggle = () => {
-    const value = !dark;
-    setDark(value);
-    document.documentElement.classList.toggle("dark", value);
-    try {
-      window.localStorage.setItem("campusflow-theme", value ? "dark" : "light");
-    } catch {
-      return;
-    }
-  };
-  return [dark, toggle];
-}
-
 function Logo() {
   return (
     <Link href="/" className="group flex shrink-0 items-center gap-2.5" aria-label="CampusFlow home">
@@ -163,7 +138,7 @@ function NavLink({ group, pathname, badge }: { group: NavGroup; pathname: string
       window.removeEventListener("keydown", close);
     };
   }, [open]);
-  const classes = cx("flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-[15px] font-medium transition duration-150", active ? "bg-goodbg text-primary" : "text-ink hover:bg-surface2");
+  const classes = cx("flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-[15px] font-medium transition duration-150", active ? "bg-tint text-primary" : "text-ink hover:bg-surface2");
   const badgeNode = badge ? (
     <span className="grid min-w-5 place-items-center rounded-full bg-accent px-1.5 text-xs font-semibold leading-5 text-white" aria-label={`${badge} waiting`}>
       {badge}
@@ -199,7 +174,7 @@ function NavLink({ group, pathname, badge }: { group: NavGroup; pathname: string
           <ul className="overflow-hidden rounded-xl border border-line bg-surface p-1.5 shadow-lift">
             {group.items.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} className={cx("group/item flex items-start gap-3 rounded-lg px-3 py-2.5 transition duration-150 hover:translate-x-0.5 hover:bg-surface2", isActive(pathname, item.href) && "bg-goodbg")}>
+                <Link href={item.href} className={cx("group/item flex items-start gap-3 rounded-lg px-3 py-2.5 transition duration-150 hover:translate-x-0.5 hover:bg-surface2", isActive(pathname, item.href) && "bg-tint")}>
                   <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-surface2 text-primary transition duration-150 group-hover/item:scale-110">
                     <item.icon className="h-4 w-4" aria-hidden />
                   </span>
@@ -305,7 +280,7 @@ function Palette({ groups, open, setOpen }: { groups: NavGroup[]; open: boolean;
               router.push(item.href);
               setOpen(false);
             }}
-            className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 data-[selected=true]:bg-goodbg"
+            className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 data-[selected=true]:bg-tint"
           >
             <item.icon className="h-4 w-4 text-primary" aria-hidden />
             <span className="font-medium">{item.label}</span>
@@ -345,6 +320,7 @@ export function Shell({ children }: { children: ReactNode }) {
             <button onClick={() => setPaletteOpen(true)} aria-label="Search pages" className="flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 text-sm text-muted hover:bg-surface2">
               <Search className="h-4 w-4" aria-hidden /> <span className="hidden sm:inline">Search</span> <kbd className="hidden rounded bg-surface2 px-1.5 text-xs sm:inline">Ctrl K</kbd>
             </button>
+            <ThemeToggle />
             <UserMenu dark={dark} toggleTheme={toggleTheme} />
             <button onClick={() => setMobile(!mobile)} aria-label="Menu" aria-expanded={mobile} className="rounded-lg border border-line p-2 xl:hidden">
               {mobile ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -358,7 +334,7 @@ export function Shell({ children }: { children: ReactNode }) {
                 <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted">{group.label}</p>
                 <div className="flex flex-wrap gap-2">
                   {group.items.map((item) => (
-                    <Link key={item.href} href={item.href} className={cx("chip", isActive(pathname, item.href) && "!border-primary !bg-goodbg")}>
+                    <Link key={item.href} href={item.href} className={cx("chip", isActive(pathname, item.href) && "!border-primary !bg-tint")}>
                       <item.icon className="h-3.5 w-3.5" aria-hidden /> {item.label}
                     </Link>
                   ))}

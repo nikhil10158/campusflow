@@ -4,6 +4,7 @@ import { Car, ClipboardCheck, GraduationCap, KeyRound, MapPin, ShieldCheck, Shie
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button, ErrorBox, Field, Input } from "@/components/ui";
 import { api } from "@/lib/api";
 import { useAuth, type User } from "@/lib/store";
@@ -58,6 +59,9 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen">
+      <div className="fixed right-4 top-4 z-30">
+        <ThemeToggle className="shadow-card" />
+      </div>
       <div className="mx-auto grid min-h-screen max-w-6xl content-center gap-10 px-5 py-10 lg:grid-cols-[1.35fr_1fr]">
         <section>
           <div className="card-in mb-6 flex items-center gap-3">
@@ -81,7 +85,7 @@ export default function LoginPage() {
           <div className="stagger grid gap-3 sm:grid-cols-2">
             {ROLES.map((role) => (
               <button key={role.account} disabled={busy} onClick={() => submit(`${role.account}@jklu.demo`)} className="group flex items-start gap-3 rounded-xl border border-line bg-surface p-3.5 text-left shadow-card transition duration-200 hover:-translate-y-1 hover:border-primary hover:shadow-lift active:scale-[0.98] disabled:opacity-50">
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-goodbg text-primary transition duration-200 group-hover:rotate-[-6deg] group-hover:scale-110 group-hover:bg-primary group-hover:text-primaryink">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-tint text-primary transition duration-200 group-hover:rotate-[-6deg] group-hover:scale-110 group-hover:bg-primary group-hover:text-primaryink">
                   <role.icon className="h-5 w-5" aria-hidden />
                 </span>
                 <span>

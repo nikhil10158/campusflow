@@ -183,7 +183,7 @@ export default function Concierge() {
           className="min-w-0 flex-1 bg-transparent px-3 py-3 text-lg outline-none placeholder:text-muted/70"
           autoComplete="off"
         />
-        <button type="button" onClick={listen} aria-label="Speak your request" className={cx("grid h-11 w-11 place-items-center rounded-xl text-muted hover:bg-surface2", listening && "bg-goodbg text-primary")}>
+        <button type="button" onClick={listen} aria-label="Speak your request" className={cx("grid h-11 w-11 place-items-center rounded-xl text-muted hover:bg-surface2", listening && "bg-tint text-primary")}>
           <Mic className="h-5 w-5" />
         </button>
         <button type="submit" disabled={busy || !input.trim()} aria-label="Send" className="grid h-11 w-11 place-items-center rounded-xl bg-primary text-primaryink transition duration-150 hover:scale-105 hover:brightness-110 active:scale-95 disabled:opacity-40 disabled:hover:scale-100">
@@ -223,7 +223,7 @@ export default function Concierge() {
                 </div>
               ))}
               {clarify && (
-                <div className="rounded-xl border border-primary/40 bg-goodbg/50 p-3.5">
+                <div className="rounded-xl border border-primary/40 bg-tint/50 p-3.5">
                   <p className="mb-2 font-medium">{clarify.question}</p>
                   <div className="flex flex-wrap gap-2">
                     {clarify.options.map((option) => (

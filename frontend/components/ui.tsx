@@ -242,7 +242,7 @@ export function QuickTiles({ items }: { items: { href: string; title: string; te
       {items.map((item) => (
         <Link key={item.href + item.title} href={item.href} className="group flex flex-col rounded-2xl border border-line bg-surface p-5 shadow-card transition duration-200 hover:-translate-y-1 hover:border-primary hover:shadow-lift">
           {item.icon && (
-            <span className="mb-3 grid h-11 w-11 place-items-center rounded-xl bg-goodbg text-primary transition duration-200 group-hover:rotate-[-6deg] group-hover:scale-110 group-hover:bg-primary group-hover:text-primaryink">
+            <span className="mb-3 grid h-11 w-11 place-items-center rounded-xl bg-tint text-primary transition duration-200 group-hover:rotate-[-6deg] group-hover:scale-110 group-hover:bg-primary group-hover:text-primaryink">
               <item.icon className="h-5 w-5" />
             </span>
           )}
@@ -330,7 +330,7 @@ export function Toasts() {
 export function Drawer({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: ReactNode }) {
   if (!open) return null;
   return (
-    <div className="fade-in fixed inset-0 z-40 flex justify-end bg-[rgba(6,24,18,0.4)] backdrop-blur-[2px]" onClick={onClose}>
+    <div className="fade-in fixed inset-0 z-40 flex justify-end bg-[var(--shade)] backdrop-blur-[2px]" onClick={onClose}>
       <aside className="drawer-in h-full w-full max-w-md overflow-y-auto bg-surface p-6 shadow-2xl" onClick={(e) => e.stopPropagation()} role="dialog" aria-label={title}>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-semibold">{title}</h2>
