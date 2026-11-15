@@ -2,7 +2,6 @@ import re
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
 
-import dateparser
 from rapidfuzz import fuzz, process
 
 MONTHS = "jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec|january|february|march|april|june|july|august|september|october|november|december"

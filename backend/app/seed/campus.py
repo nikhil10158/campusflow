@@ -1,4 +1,5 @@
 ﻿import math
+import os
 import random
 from datetime import date, datetime, timedelta
 
@@ -10,8 +11,9 @@ TERM_END = date(2026, 12, 5)
 HOLIDAYS = [(date(2026, 10, 20), "Synthetic Autumn Holiday"), (date(2026, 11, 24), "Synthetic Founders Day Holiday")]
 DEPTS = ["CSE", "ECE", "ME", "CHE", "EEE"]
 SEMESTERS = [1, 3, 5, 7]
-SECTION_NAMES = ["A", "B"]
-CLASSROOM_CAPACITIES = [120] * 2 + [100] * 3 + [90] * 3 + [80] * 5 + [70] * 6 + [60] * 7 + [50] * 5 + [40] * 3
+SCALE = max(1, int(os.environ.get("SCALE", "1")))
+SECTION_NAMES = list("ABCDEF")[: 2 * SCALE]
+CLASSROOM_CAPACITIES = ([120] * 2 + [100] * 3 + [90] * 3 + [80] * 5 + [70] * 6 + [60] * 7 + [50] * 5 + [40] * 3) * SCALE
 
 BUILDINGS = [
     (1, "Academic Block A", 200, 300, "academic"),
@@ -97,7 +99,7 @@ def build_venues() -> list[dict]:
             "approver_scope": {"classroom": "admin_office", "seminar_hall": "admin_office", "lab": "lab_incharge", "amphitheatre": "estate"}[vtype],
         })
 
-    layout = [(1, "A", 12), (2, "B", 12), (3, "C", 10)]
+    layout = [(1, "A", 12 * SCALE), (2, "B", 12 * SCALE), (3, "C", 10 * SCALE)]
     number = 0
     for building, letter, count in layout:
         for index in range(count):
@@ -106,11 +108,11 @@ def build_venues() -> list[dict]:
             features = ["projector"] + (["ac"] if number % 2 == 0 else []) + (["smartboard"] if number % 5 == 0 else []) + (["mic"] if capacity >= 90 else [])
             add(f"{letter}-{floor + 1}{index % 4 + 1:02d}", f"Classroom {letter}-{floor + 1}{index % 4 + 1:02d}", "classroom", building, floor, capacity, features)
             number += 1
-    for index, capacity in enumerate([80, 100, 120, 150]):
+    for index, capacity in enumerate([80, 100, 120, 150] * SCALE):
         add(f"SH-{index + 1}", f"Seminar Hall {index + 1}", "seminar_hall", 4 if index < 2 else 5, 0, capacity, ["projector", "ac", "mic", "smartboard"])
     lab_number = 0
     for lab_type, count, building, depts, supervisor in LAB_PLAN:
-        for _ in range(count):
+        for _ in range(count * SCALE):
             lab_number += 1
             features = ["projector", "ac"] + (["pcs"] if lab_type in ("cs", "electronics") else [])
             add(f"L-{lab_number}", f"{lab_type.title()} Lab {lab_number}", "lab", 6 if lab_number % 2 else 7, 0, 36 if lab_type in ("cs", "electronics") else 30, features,
@@ -123,7 +125,7 @@ def build_venues() -> list[dict]:
 def build_faculty(rng: random.Random) -> list[dict]:
     faculty: list[dict] = []
     for dept in DEPTS:
-        for index in range(8):
+        for index in range(8 * SCALE):
             number = len(faculty)
             name = f"Dr. {FIRST_INITIALS[(number * 3) % len(FIRST_INITIALS)]}. {SURNAMES[(number * 7 + index) % len(SURNAMES)]}"
             faculty.append({"id": number + 1, "name": name, "dept": dept})
@@ -315,4 +317,5 @@ def build_telemetry(entries: list[dict], sections: dict[int, dict], ghost_ids: s
                     samples.append({"venue_id": entry["venue_id"], "ts_hour": stamp, "headcount": max(0, round(size * ratio))})
             day += timedelta(days=1)
     return samples
+
 

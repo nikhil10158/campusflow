@@ -1,18 +1,16 @@
 import json
 from collections.abc import Iterator
-from typing import Annotated
-
 from fastapi import APIRouter, Depends, HTTPException
 from sse_starlette.sse import EventSourceResponse
 
 from app import db
 from app.agent import orchestrator, rag, tools
 from app.agent.llm import get_llm
-from app.deps import CurrentUser, bearer, rate_limit
+from app.deps import CurrentUser, LightUser, rate_limit
 from app.models.schemas import AgentChatIn, PolicyAskIn
 from app.models.tables import User
 from app.rules import load_rules
-from app.services import audit, auth
+from app.services import audit
 from app.services.clock import get_now
 from app.services.snapshot import get_index
 
@@ -20,19 +18,7 @@ router = APIRouter(tags=["agent"])
 ME_INTENTS = {"lookup", "policy", "free_rooms"}
 
 
-def light_user(credentials=Depends(bearer)) -> User:
-    if credentials is None:
-        raise HTTPException(status_code=401, detail="Sign in first")
-    user_id = auth.decode_token(credentials.credentials)
-    with db.session_scope() as session:
-        user = session.get(User, user_id) if user_id else None
-        if user is None:
-            raise HTTPException(status_code=401, detail="Invalid or expired token")
-        session.expunge(user)
-    return user
-
-
-AgentUser = Annotated[User, Depends(light_user)]
+AgentUser = LightUser
 
 
 def compose_message(payload: AgentChatIn) -> str:

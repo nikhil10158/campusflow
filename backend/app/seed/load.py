@@ -8,6 +8,7 @@ from sqlmodel import Session, select
 from app import db
 from app.config import DATA_DIR
 from app.models.tables import ALL_TABLES, Booking, CalendarEvent, Venue
+from app.seed.campus import SCALE
 from app.seed.world import build_world
 from app.services import audit, passes
 from app.services.auth import hash_password
@@ -70,7 +71,7 @@ def generate_rows() -> dict[str, list[dict]]:
 
 
 def load_rows() -> dict[str, list[dict]]:
-    if BASELINE_PATH.exists():
+    if BASELINE_PATH.exists() and SCALE == 1:
         return json.loads(BASELINE_PATH.read_text(encoding="utf-8"))
     return generate_rows()
 

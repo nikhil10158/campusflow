@@ -14,7 +14,7 @@ from app.services.bookings import booking_dict
 from app.services.clock import get_now
 from app.services.config import solver_settings
 from app.services.errors import Forbidden
-from app.services.snapshot import get_index, get_snapshot
+from app.services.snapshot import get_snapshot
 
 router = APIRouter(tags=["resources"])
 Staff = Annotated[t.User, Depends(require_roles("admin", "approver", "faculty"))]
@@ -167,6 +167,20 @@ def reject_exception(exception_id: int, payload: RejectIn, session: SessionDep, 
 @router.post("/disruptions/assess")
 def assess_disruption(payload: DisruptionIn, session: SessionDep, user: AdminUser) -> dict:
     return ops.assess_disruption(session, user, payload)
+
+
+@router.get("/disruptions")
+def list_disruptions(session: SessionDep, user: AdminUser) -> list[dict]:
+    rows = session.exec(select(t.Disruption).order_by(t.Disruption.id.desc()).limit(30)).all()
+    return [{"id": d.id, "kind": d.kind, "description": d.description, "status": d.status, "start": d.start_dt.isoformat(), "end": d.end_dt.isoformat(), "affected": d.plan_json.get("affected", 0), "resolved": d.plan_json.get("resolved", 0)} for d in rows]
+
+
+@router.get("/disruptions/{disruption_id}")
+def get_disruption(disruption_id: int, session: SessionDep, user: AdminUser) -> dict:
+    row = session.get(t.Disruption, disruption_id)
+    if row is None:
+        raise HTTPException(status_code=404, detail="Disruption not found")
+    return {"disruption_id": row.id, "status": row.status, **row.plan_json}
 
 
 @router.post("/disruptions/{disruption_id}/submit")

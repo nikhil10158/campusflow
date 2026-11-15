@@ -1,7 +1,6 @@
 from datetime import date
 
 from fastapi import APIRouter, HTTPException, Response
-from sqlmodel import select
 
 from app.deps import AdminUser, CurrentUser, SessionDep
 from app.models import tables as t

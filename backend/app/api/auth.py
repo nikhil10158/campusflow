@@ -33,4 +33,4 @@ def me(user: CurrentUser) -> UserOut:
 @router.get("/demo-users")
 def demo_users(session: SessionDep) -> list[dict]:
     rows = session.exec(select(User).order_by(User.id)).all()
-    return [{"email": u.email, "role": u.role, "name": u.name} for u in rows]
+    return [{"id": u.id, "email": u.email, "role": u.role, "name": u.name} for u in rows]

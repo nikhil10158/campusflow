@@ -1,6 +1,6 @@
 import dataclasses
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from app.engine import policy
 from app.engine.alternatives import Alternative, recommend_alternatives, with_window

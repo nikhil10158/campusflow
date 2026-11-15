@@ -3,12 +3,11 @@ import hmac
 import time
 from datetime import date, datetime, timedelta
 
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, HTTPException, Response
 from sqlmodel import select
 
-from app import db
 from app.config import get_settings
-from app.deps import AdminUser, CurrentUser, SessionDep
+from app.deps import AdminUser, CurrentUser, LightAdmin, SessionDep
 from app.engine import batch
 from app.engine.search import SearchRequest, search_free_rooms
 from app.models import tables as t
@@ -122,7 +121,6 @@ def optimise(payload: BatchIn, session: SessionDep, user: AdminUser) -> dict:
 def benchmark(session: SessionDep, user: AdminUser, events: int = 25) -> dict:
     index = get_index(session)
     rules = load_rules()
-    first = date.fromisoformat("2026-11-17")
     latencies = []
     for count in (1, 3, 7):
         windows = [(datetime(2026, 11, 17, 10) + timedelta(days=n), datetime(2026, 11, 17, 11) + timedelta(days=n)) for n in range(count)]
@@ -139,5 +137,5 @@ def benchmark(session: SessionDep, user: AdminUser, events: int = 25) -> dict:
 
 
 @router.post("/simulate/race")
-def simulate_race(user: AdminUser, racers: int = 20) -> dict:
+def simulate_race(user: LightAdmin, racers: int = 20) -> dict:
     return race.run_race(min(max(racers, 2), 40))

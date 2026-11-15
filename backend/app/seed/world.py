@@ -61,8 +61,9 @@ def build_users(password_hash: str, faculty: list[dict], sections: list[dict]) -
 
     for email, role, scopes, dept in DEMO_ROLE_USERS:
         add(email, role, scopes, None, dept, email.replace(".", " ").title())
+    per_dept = len(faculty) // len(campus.DEPTS)
     for number in range(10):
-        member = faculty[(number % 5) * 8 + number // 5]
+        member = faculty[(number % 5) * per_dept + number // 5]
         add(f"faculty{number + 1:02d}", "faculty", [], member["id"], member["dept"], member["name"])
     for number in range(5):
         section = sections[number * 6]

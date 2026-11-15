@@ -1,11 +1,8 @@
 import base64
 from collections import defaultdict
-from datetime import datetime, timedelta
 
 from sqlmodel import Session, select
 
-from app.config import get_settings
-from app.engine.timeutil import at_minute
 from app.ingest import normalise, validate
 from app.ingest.csv import parse_csv
 from app.ingest.gemini_fallback import extract_with_gemini

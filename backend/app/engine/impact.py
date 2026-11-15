@@ -8,7 +8,7 @@ from app.engine.availability import AvailabilityIndex, booking_is_active
 from app.engine.parking import check_parking, vehicles_of
 from app.engine.search import walking_minutes
 from app.engine.timeutil import at_minute, date_range
-from app.engine.types import BookingInfo, EntryInfo, Snapshot, VenueInfo
+from app.engine.types import EntryInfo, Snapshot, VenueInfo
 from app.rules import Rules
 
 SHIFTS_MIN = [0, 30, -30, 60, -60]

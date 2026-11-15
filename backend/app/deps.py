@@ -38,6 +38,30 @@ def current_user(session: SessionDep, credentials: Annotated[HTTPAuthorizationCr
 CurrentUser = Annotated[User, Depends(current_user)]
 
 
+def light_user(credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer)]) -> User:
+    if credentials is None:
+        raise HTTPException(status_code=401, detail="Sign in first")
+    user_id = auth.decode_token(credentials.credentials)
+    with open_session() as session:
+        user = session.get(User, user_id) if user_id else None
+        if user is None:
+            raise HTTPException(status_code=401, detail="Invalid or expired token")
+        session.expunge(user)
+    return user
+
+
+LightUser = Annotated[User, Depends(light_user)]
+
+
+def light_admin(user: LightUser) -> User:
+    if user.role != "admin":
+        raise HTTPException(status_code=403, detail="Requires one of: admin")
+    return user
+
+
+LightAdmin = Annotated[User, Depends(light_admin)]
+
+
 def require_roles(*roles: str) -> Callable[[User], User]:
     def check(user: CurrentUser) -> User:
         if user.role not in roles:

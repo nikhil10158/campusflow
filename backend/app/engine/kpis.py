@@ -1,7 +1,7 @@
 from datetime import date, datetime, timedelta
 
 from app.engine import utilisation
-from app.engine.availability import AvailabilityIndex, booking_is_active
+from app.engine.availability import AvailabilityIndex
 from app.engine.ghost import detect_ghosts, projected_uplift_hours
 from app.engine.parking import lot_timeline, raw_capacity
 from app.engine.timeutil import date_range

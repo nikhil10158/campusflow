@@ -5,7 +5,6 @@ from app.ingest.csv import parse_csv
 from app.ingest.grid_xlsx import parse_grid_xlsx
 from app.ingest.pdf import parse_pdf
 from app.models import tables as t
-from app.rules import load_rules
 from app.seed.files import SAMPLE_DIR, SAMPLE_SECTION, generate_samples
 from app.services import snapshot as snapshot_service
 from tests.conftest import fresh, login

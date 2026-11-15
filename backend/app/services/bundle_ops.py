@@ -1,4 +1,4 @@
-from sqlmodel import Session, select
+from sqlmodel import Session
 
 from app.engine import guesthouse
 from app.models import tables as t

@@ -288,3 +288,10 @@ def test_ghost_release_flips_slot_and_search_returns_it(client, session) -> None
     assert released["state"] == "FREE_RELEASED"
 
 
+
+
+def test_race_endpoint_is_admin_only_and_reports_one_winner(client) -> None:
+    assert client.post("/simulate/race", headers=login(client, "faculty01")).status_code == 403
+    body = client.post("/simulate/race", params={"racers": 20}, headers=login(client, "admin")).json()
+    assert body["winners"] == 1 and body["validator_violations"] == []
+

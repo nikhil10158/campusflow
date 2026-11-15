@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-2: #eef1f5;
+  --line: #dfe3ea;
+  --text: #16202e;
+  --muted: #5d6b7e;
+  --primary: #2459d6;
+  --primary-ink: #ffffff;
+  --good: #16794c;
+  --good-bg: #dff4e8;
+  --warn: #9a5b00;
+  --warn-bg: #fdf0d2;
+  --bad: #b42318;
+  --bad-bg: #fde4e1;
+  --info: #0e6b8c;
+  --info-bg: #dcf1f8;
+  --ghost: #6b3fa0;
+  --ghost-bg: #eadffa;
+  --layer-timetable: #9db4e0;
+  --layer-confirmed: #3f6fd8;
+  --layer-held: #e8b44a;
+  --layer-maintenance: #8a94a3;
+  --layer-released: #7ed0b4;
+}
+
+:root.dark {
+  --bg: #0d121a;
+  --surface: #151c27;
+  --surface-2: #1d2634;
+  --line: #2a3546;
+  --text: #e6ebf3;
+  --muted: #9aa8bb;
+  --primary: #6d9bff;
+  --primary-ink: #0a1020;
+  --good: #5fd49b;
+  --good-bg: #123626;
+  --warn: #f0c066;
+  --warn-bg: #3b2c0c;
+  --bad: #ff8d84;
+  --bad-bg: #431a17;
+  --info: #6cc8e6;
+  --info-bg: #0f3140;
+  --ghost: #c19bf0;
+  --ghost-bg: #2f2147;
+  --layer-timetable: #3d5486;
+  --layer-confirmed: #5b8cf5;
+  --layer-held: #c9962c;
+  --layer-maintenance: #5b6574;
+  --layer-released: #3a9c80;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface2: var(--surface-2);
+  --color-line: var(--line);
+  --color-ink: var(--text);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primaryink: var(--primary-ink);
+  --color-good: var(--good);
+  --color-goodbg: var(--good-bg);
+  --color-warn: var(--warn);
+  --color-warnbg: var(--warn-bg);
+  --color-bad: var(--bad);
+  --color-badbg: var(--bad-bg);
+  --color-info: var(--info);
+  --color-infobg: var(--info-bg);
+  --color-ghost: var(--ghost);
+  --color-ghostbg: var(--ghost-bg);
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--surface-2) 25%, var(--line) 37%, var(--surface-2) 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+  border-radius: 8px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; }
+}

@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from datetime import date
 from typing import Any
 
-from sqlmodel import Session, select
+from sqlmodel import select
 
 from app import db
 from app.config import get_settings

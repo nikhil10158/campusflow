@@ -5,7 +5,6 @@ from sqlmodel import select
 
 from app.deps import CurrentUser, SessionDep
 from app.engine import explain
-from app.engine.alternatives import recommend_alternatives
 from app.engine.cohort import CohortRequest, find_common_slots
 from app.engine.search import SearchRequest, search_free_rooms
 from app.engine.utilisation import free_room_heatmap
@@ -71,6 +70,29 @@ def venue_timeline(venue_id: int, session: SessionDep, user: CurrentUser, date_f
         released = [int(i) for i in index.layers[index.venue_pos[venue_id], index.offset(day), 4].nonzero()[0]]
         out.append({"date": day.isoformat(), "holiday": day in index.snapshot.holidays, "segments": segments, "released_slots": released, "free_windows": index.free_windows(venue_id, day, 30)})
     return {"venue": {"id": venue.id, "code": venue.code, "type": venue.type, "capacity": venue.capacity, "setup_buffer_min": venue.setup_buffer_min, "teardown_buffer_min": venue.teardown_buffer_min}, "days": out}
+
+
+@router.get("/day")
+def day_view(session: SessionDep, user: CurrentUser, day: date, types: str = "classroom,seminar_hall") -> dict:
+    index = get_index(session)
+    if index.offset(day) is None:
+        raise HTTPException(status_code=422, detail=f"Date must be between {index.start} and {index.end}")
+    wanted = csv_list(types)
+    redact = user.role != "admin"
+    rows = []
+    for venue in index.snapshot.venues:
+        if venue.type not in wanted:
+            continue
+        segments = []
+        for segment in index.day_segments(venue.id, day):
+            item = segment.as_dict()
+            if redact:
+                item["label"] = "Busy"
+                item["source_id"] = None
+            segments.append(item)
+        released = [int(i) for i in index.layers[index.venue_pos[venue.id], index.offset(day), 4].nonzero()[0]]
+        rows.append({"id": venue.id, "code": venue.code, "type": venue.type, "capacity": venue.capacity, "building_id": venue.building_id, "segments": segments, "released_slots": released})
+    return {"date": day.isoformat(), "holiday": day in index.snapshot.holidays, "venues": rows}
 
 
 @router.get("/explain")
