@@ -21,12 +21,20 @@ const TONES: Record<Tone, string> = {
   primary: "bg-primary text-primaryink",
 };
 
+const DOT: Record<Tone, string> = {
+  neutral: "bg-muted",
+  good: "bg-good",
+  warn: "bg-warn",
+  bad: "bg-bad",
+  info: "bg-info",
+  ghost: "bg-ghost",
+  primary: "bg-primaryink",
+};
+
 export function Badge({ tone = "neutral", children, title }: { tone?: Tone; children: ReactNode; title?: string }) {
   return (
-    <span
-      title={title}
-      className={cx("inline-flex items-center gap-1 whitespace-nowrap border border-current/40 px-1.5 py-px font-mono text-[10.5px] font-medium uppercase tracking-wider", TONES[tone])}
-    >
+    <span title={title} className={cx("inline-flex items-center gap-1.5 whitespace-nowrap px-1.5 py-px font-display text-[13px] font-semibold uppercase leading-5 tracking-wide", TONES[tone])}>
+      <span className={cx("h-1.5 w-1.5 rounded-full", DOT[tone])} aria-hidden />
       {children}
     </span>
   );
@@ -47,15 +55,10 @@ export function StatusBadge({ state }: { state: string }) {
 
 export function Card({ title, actions, children, className }: { title?: ReactNode; actions?: ReactNode; children: ReactNode; className?: string }) {
   return (
-    <section className={cx("hard rise bg-surface", className)}>
+    <section className={cx("border border-line border-t-4 border-t-edge bg-surface", className)}>
       {(title || actions) && (
-        <header className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-edge bg-surface2 px-4 py-2">
-          {title && (
-            <h2 className="flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.14em]">
-              <span className="inline-block h-2 w-2 bg-primary" aria-hidden />
-              {title}
-            </h2>
-          )}
+        <header className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-4 py-2.5">
+          {title && <h2 className="font-display text-[17px] font-semibold uppercase leading-none tracking-wider">{title}</h2>}
           {actions}
         </header>
       )}
@@ -66,13 +69,18 @@ export function Card({ title, actions, children, className }: { title?: ReactNod
 
 export function PageHeader({ title, subtitle, actions, kicker }: { title: string; subtitle?: string; actions?: ReactNode; kicker?: string }) {
   return (
-    <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b-2 border-edge pb-5">
+    <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
       <div className="max-w-3xl">
-        <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.2em] text-primary">{kicker ?? "CampusFlow · operations"}</p>
-        <h1 className="font-display text-4xl font-semibold leading-none tracking-tight sm:text-5xl">
-          <span className="marker">{title}</span>
-        </h1>
-        {subtitle && <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-muted">{subtitle}</p>}
+        <p className="mb-1 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-muted">
+          <span className="h-2.5 w-2.5 rounded-full bg-primary ring-2 ring-edge" aria-hidden />
+          {kicker ?? "Campusflow"}
+        </p>
+        <h1 className="font-display text-5xl font-bold uppercase leading-[0.95] tracking-tight sm:text-6xl">{title}</h1>
+        <div className="mt-3 flex h-1 w-full max-w-md" aria-hidden>
+          <span className="w-16 bg-primary" />
+          <span className="flex-1 bg-edge" />
+        </div>
+        {subtitle && <p className="mt-3 max-w-2xl text-[16px] leading-relaxed text-muted">{subtitle}</p>}
       </div>
       {actions}
     </div>
@@ -86,16 +94,16 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 export function Button({ variant = "primary", busy, className, children, disabled, ...rest }: ButtonProps) {
   const styles = {
-    primary: "border-2 border-edge bg-primary text-primaryink shadow-[2px_2px_0_var(--shadow)] hover:-translate-x-px hover:-translate-y-px hover:shadow-[3px_3px_0_var(--shadow)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none",
-    outline: "border-2 border-edge bg-surface text-ink shadow-[2px_2px_0_var(--shadow)] hover:-translate-x-px hover:-translate-y-px hover:bg-surface2 hover:shadow-[3px_3px_0_var(--shadow)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none",
-    danger: "border-2 border-edge bg-bad text-primaryink shadow-[2px_2px_0_var(--shadow)] hover:-translate-x-px hover:-translate-y-px hover:shadow-[3px_3px_0_var(--shadow)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none",
+    primary: "bg-primary text-primaryink border-2 border-primaryink hover:bg-board hover:text-boardink hover:border-board",
+    outline: "border-2 border-edge bg-transparent text-ink hover:bg-edge hover:text-bg",
+    danger: "border-2 border-bad bg-bad text-white hover:bg-transparent hover:text-bad",
     ghost: "border-2 border-transparent text-ink underline-offset-4 hover:underline",
   }[variant];
   return (
     <button
       {...rest}
       disabled={disabled || busy}
-      className={cx("inline-flex items-center justify-center gap-2 px-3 py-1.5 text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-45 disabled:shadow-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary", styles, className)}
+      className={cx("inline-flex items-center justify-center gap-2 px-3.5 py-1.5 font-display text-[15px] font-semibold uppercase tracking-wider transition-colors disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-edge", styles, className)}
     >
       {busy && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
       {children}
@@ -105,7 +113,7 @@ export function Button({ variant = "primary", busy, className, children, disable
 
 export function Field({ label, children, hint }: { label: string; children: ReactNode; hint?: string }) {
   return (
-    <label className="flex flex-col gap-1 font-mono text-[10.5px] font-medium uppercase tracking-wider text-muted">
+    <label className="flex flex-col gap-1 font-display text-[13px] font-semibold uppercase tracking-wider text-muted">
       {label}
       {children}
       {hint && <span className="font-sans text-xs font-normal normal-case tracking-normal">{hint}</span>}
@@ -113,7 +121,7 @@ export function Field({ label, children, hint }: { label: string; children: Reac
   );
 }
 
-const INPUT = "w-full border-2 border-edge bg-surface px-2.5 py-1.5 font-sans text-sm normal-case tracking-normal text-ink outline-none focus:bg-bg focus:shadow-[3px_3px_0_var(--primary)]";
+const INPUT = "w-full border border-edge bg-surface px-2.5 py-1.5 font-sans text-[15px] normal-case tracking-normal text-ink outline-none focus:border-2 focus:border-edge focus:bg-surface2 focus:px-[9px] focus:py-[5px]";
 
 export function Input(props: InputHTMLAttributes<HTMLInputElement>) {
   return <input {...props} className={cx(INPUT, props.className)} />;
@@ -128,13 +136,13 @@ export function Skeleton({ className }: { className?: string }) {
 }
 
 export function Empty({ children }: { children: ReactNode }) {
-  return <div className="border-2 border-dashed border-line p-6 text-center font-mono text-xs uppercase tracking-wide text-muted">{children}</div>;
+  return <div className="border border-dashed border-edge p-6 text-center font-display text-base uppercase tracking-wider text-muted">{children}</div>;
 }
 
 export function ErrorBox({ error }: { error: unknown }) {
   const message = error instanceof Error ? error.message : String(error);
   return (
-    <div role="alert" className="flex items-start gap-2 border-2 border-bad bg-badbg p-3 text-sm text-bad">
+    <div role="alert" className="flex items-start gap-2 border-l-8 border-bad bg-badbg p-3 text-sm text-bad">
       <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
       <span>{message}</span>
     </div>
@@ -146,7 +154,7 @@ const NOTICE_EDGE: Record<string, string> = { info: "border-info", good: "border
 export function Notice({ tone = "info", children }: { tone?: "info" | "good" | "warn" | "bad"; children: ReactNode }) {
   const Icon = tone === "good" ? CheckCircle2 : tone === "info" ? Info : AlertTriangle;
   return (
-    <div className={cx("flex items-start gap-2 border-l-4 p-3 text-sm", NOTICE_EDGE[tone], TONES[tone])}>
+    <div className={cx("flex items-start gap-2 border-l-8 p-3 text-sm", NOTICE_EDGE[tone], TONES[tone])}>
       <Icon className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
       <div>{children}</div>
     </div>
@@ -156,9 +164,9 @@ export function Notice({ tone = "info", children }: { tone?: "info" | "good" | "
 export function Toasts() {
   const { toasts, dismiss } = useToasts();
   return (
-    <div className="pointer-events-none fixed bottom-14 right-4 z-50 flex w-80 max-w-[calc(100vw-2rem)] flex-col gap-2" aria-live="polite">
+    <div className="pointer-events-none fixed bottom-4 right-4 z-50 flex w-80 max-w-[calc(100vw-2rem)] flex-col gap-2" aria-live="polite">
       {toasts.map((toast) => (
-        <div key={toast.id} className={cx("hard-sm pointer-events-auto rise flex items-start justify-between gap-2 p-3 text-sm", TONES[toast.tone === "good" ? "good" : toast.tone === "bad" ? "bad" : "info"])}>
+        <div key={toast.id} className="slide pointer-events-auto flex items-start justify-between gap-2 border-l-8 border-primary bg-board p-3 text-sm text-white shadow-lg">
           <span>{toast.text}</span>
           <button onClick={() => dismiss(toast.id)} aria-label="Dismiss" className="shrink-0 opacity-70 hover:opacity-100">
             <X className="h-4 w-4" />
@@ -172,10 +180,10 @@ export function Toasts() {
 export function Drawer({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: ReactNode }) {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-40 flex justify-end bg-black/40" onClick={onClose}>
-      <aside className="h-full w-full max-w-md overflow-y-auto border-l-2 border-edge bg-surface p-5 shadow-[-6px_0_0_var(--shadow)]" onClick={(e) => e.stopPropagation()} role="dialog" aria-label={title}>
-        <div className="mb-4 flex items-center justify-between border-b-2 border-edge pb-2">
-          <h2 className="font-display text-xl font-semibold">{title}</h2>
+    <div className="fixed inset-0 z-40 flex justify-end bg-black/50" onClick={onClose}>
+      <aside className="slide h-full w-full max-w-md overflow-y-auto border-l-4 border-edge bg-surface p-5" onClick={(e) => e.stopPropagation()} role="dialog" aria-label={title}>
+        <div className="mb-4 flex items-center justify-between border-b border-line pb-2">
+          <h2 className="font-display text-2xl font-bold uppercase tracking-wide">{title}</h2>
           <button onClick={onClose} aria-label="Close" className="p-1 hover:bg-surface2">
             <X className="h-4 w-4" />
           </button>
@@ -188,9 +196,9 @@ export function Drawer({ open, onClose, title, children }: { open: boolean; onCl
 
 export function Stat({ label, value, tone }: { label: string; value: ReactNode; tone?: Tone }) {
   return (
-    <div className="hard-sm bg-surface p-4">
-      <div className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-muted">{label}</div>
-      <div className={cx("mt-1 font-display text-4xl font-semibold leading-none tabular-nums", tone === "bad" && "text-bad", tone === "good" && "text-good", tone === "warn" && "text-warn")}>{value}</div>
+    <div className="border border-line border-l-8 border-l-edge bg-surface p-3 pl-4">
+      <div className="font-display text-[13px] font-semibold uppercase tracking-wider text-muted">{label}</div>
+      <div className={cx("font-display text-5xl font-bold leading-none tabular-nums", tone === "bad" && "text-bad", tone === "good" && "text-good", tone === "warn" && "text-warn")}>{value}</div>
     </div>
   );
 }

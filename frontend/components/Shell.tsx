@@ -2,13 +2,12 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { Command } from "cmdk";
-import { ChevronDown, LogOut, Menu, Moon, Search, Sun, X } from "lucide-react";
+import { LogOut, Menu, Moon, Search, Sun, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 
 import { api } from "@/lib/api";
-import { fmtDateTime } from "@/lib/format";
 import { useAuth, type User } from "@/lib/store";
 import type { AgentStatus } from "@/lib/types";
 
@@ -79,6 +78,8 @@ const GROUPS: NavGroup[] = [
   },
 ];
 
+const LINE_COLORS = ["#ffd100", "#00a651", "#ff7a00", "#d4007f", "#00a3ad"];
+
 function visibleGroups(role: Role | undefined): NavGroup[] {
   if (!role) return [];
   return GROUPS.map((group) => ({ ...group, items: group.items.filter((item) => item.roles.includes(role)) })).filter((group) => group.items.length > 0);
@@ -115,26 +116,89 @@ function useTheme(): [boolean, () => void] {
   return [dark, toggle];
 }
 
-function Logo() {
+function Roundel() {
   return (
-    <Link href="/" className="flex items-center gap-2" aria-label="CampusFlow home">
-      <span className="grid h-7 w-7 grid-cols-3 gap-px border-2 border-edge bg-edge p-px" aria-hidden>
-        {[1, 0, 1, 0, 1, 0, 0, 0, 1].map((filled, index) => (
-          <span key={index} className={filled ? (index === 4 ? "bg-primary" : "bg-marker") : "bg-surface"} />
-        ))}
+    <Link href="/" className="flex items-center gap-2.5" aria-label="CampusFlow home">
+      <span className="relative grid h-9 w-9 place-items-center rounded-full border-[5px] border-primary" aria-hidden>
+        <span className="absolute left-[-9px] right-[-9px] top-1/2 h-3 -translate-y-1/2 bg-boardink" />
+        <span className="relative font-display text-[11px] font-bold leading-none text-board">CF</span>
       </span>
-      <span className="font-display text-xl leading-none tracking-tight">
-        <span className="italic">campus</span>
-        <span className="font-semibold">flow</span>
-      </span>
+      <span className="font-display text-2xl font-bold uppercase leading-none tracking-[0.12em] text-white">Campusflow</span>
     </Link>
   );
 }
 
-function GroupMenu({ group, pathname }: { group: NavGroup; pathname: string }) {
+function Flaps({ text }: { text: string }) {
+  return (
+    <span aria-label={text} className="inline-flex text-sm">
+      {text.split("").map((char, index) => (
+        <span key={index} className={cx("flap flip", char === " " && "bg-transparent")} style={{ animationDelay: `${index * 25}ms`, background: char === " " ? "transparent" : undefined }} aria-hidden>
+          {char === " " ? " " : char}
+        </span>
+      ))}
+    </span>
+  );
+}
+
+function BoardStrip({ dark, toggleTheme, onSearch, onMenu, menuOpen }: { dark: boolean; toggleTheme: () => void; onSearch: () => void; onMenu: () => void; menuOpen: boolean }) {
+  const router = useRouter();
+  const { user, logout } = useAuth();
+  const status = useQuery({ queryKey: ["agent-status"], queryFn: () => api<AgentStatus>("/agent/status"), refetchInterval: 30000 });
+  const clock = useQuery({ queryKey: ["demo-now"], queryFn: () => api<{ now: string }>("/demo/now"), refetchInterval: 15000 });
+  const data = status.data;
+  const used = data && data.daily_limit ? Math.min(100, Math.round((data.calls_today / data.daily_limit) * 100)) : 0;
+  const when = clock.data ? new Date(clock.data.now) : null;
+  const text = when ? `${when.toLocaleDateString("en-GB", { weekday: "short", day: "2-digit", month: "short" }).replace(",", "").toUpperCase()} ${when.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}` : "";
+  return (
+    <div className="bg-board text-white">
+      <div className="mx-auto flex max-w-[1500px] flex-wrap items-center gap-x-5 gap-y-2 px-4 py-2">
+        <Roundel />
+        <div className="ml-auto flex flex-wrap items-center gap-x-5 gap-y-2">
+          <span className="hidden items-center gap-2 font-display text-[13px] uppercase tracking-widest text-white/60 sm:flex" title="Every time-based rule uses this clock">
+            Demo time <Flaps text={text || "…"} />
+          </span>
+          <span className="flex items-center gap-2 font-display text-[13px] uppercase tracking-widest text-white/80" title={data?.model ? `Model ${data.model}` : "No Gemini key: deterministic offline mode"}>
+            <span className={cx("h-2.5 w-2.5 rounded-full", data?.mode === "live" ? "bg-accent" : data?.mode === "degraded" ? "bg-boardink" : "bg-white/40")} aria-hidden />
+            AI {data?.mode ?? "…"}
+            {data && data.mode !== "offline" && (
+              <span className="inline-block h-1 w-12 bg-white/20" aria-label={`${used}% of daily AI quota used`}>
+                <span className="block h-full bg-boardink" style={{ width: `${used}%` }} />
+              </span>
+            )}
+          </span>
+          <span className="hidden font-display text-[13px] uppercase tracking-widest text-white/60 md:inline">
+            {user?.name} · <span className="text-boardink">{user?.role}</span>
+          </span>
+          <button onClick={onSearch} className="hidden items-center gap-1.5 border border-white/30 px-2 py-1 font-display text-[13px] uppercase tracking-wider hover:bg-white hover:text-board sm:flex">
+            <Search className="h-3.5 w-3.5" aria-hidden /> Jump <kbd className="text-white/50">Ctrl K</kbd>
+          </button>
+          <button onClick={toggleTheme} aria-label="Toggle theme" className="border border-white/30 p-1.5 hover:bg-white hover:text-board">
+            {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </button>
+          <button
+            onClick={() => {
+              logout();
+              router.push("/login");
+            }}
+            aria-label="Sign out"
+            className="border border-white/30 p-1.5 hover:bg-white hover:text-board"
+          >
+            <LogOut className="h-4 w-4" />
+          </button>
+          <button onClick={onMenu} aria-label="Menu" aria-expanded={menuOpen} className="border border-white/30 p-1.5 hover:bg-white hover:text-board lg:hidden">
+            {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Station({ group, index, pathname }: { group: NavGroup; index: number; pathname: string }) {
   const [open, setOpen] = useState(false);
   const box = useRef<HTMLDivElement>(null);
   const active = group.items.some((item) => isActive(pathname, item.href));
+  const color = LINE_COLORS[index % LINE_COLORS.length];
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
@@ -151,32 +215,25 @@ function GroupMenu({ group, pathname }: { group: NavGroup; pathname: string }) {
       window.removeEventListener("keydown", close);
     };
   }, [open]);
-  if (group.items.length === 1) {
-    const item = group.items[0];
-    return (
-      <Link href={item.href} className={cx("px-3 py-2 font-mono text-xs uppercase tracking-wider hover:bg-surface2", active && "bg-ink text-bg hover:bg-ink")}>
-        {item.label}
-      </Link>
-    );
-  }
   return (
     <div ref={box} className="relative">
-      <button
-        onClick={() => setOpen(!open)}
-        aria-expanded={open}
-        className={cx("flex items-center gap-1 px-3 py-2 font-mono text-xs uppercase tracking-wider hover:bg-surface2", active && "bg-ink text-bg hover:bg-ink")}
-      >
-        {group.label}
-        <ChevronDown className={cx("h-3 w-3 transition-transform", open && "rotate-180")} aria-hidden />
+      <button onClick={() => setOpen(!open)} aria-expanded={open} className="group flex items-center gap-2 py-3 pr-1">
+        <span className={cx("grid h-5 w-5 place-items-center rounded-full border-[3px] border-edge bg-surface transition-transform group-hover:scale-110")} style={active ? { background: color } : undefined} aria-hidden>
+          {active && <span className="h-1.5 w-1.5 rounded-full bg-edge" />}
+        </span>
+        <span className={cx("font-display text-[17px] font-semibold uppercase tracking-widest", active ? "text-ink" : "text-muted group-hover:text-ink")}>{group.label}</span>
       </button>
       {open && (
-        <div className="hard rise absolute left-0 top-full z-40 mt-1 w-72 bg-surface">
+        <div className="slide absolute left-0 top-full z-40 w-72 border border-edge border-t-4 bg-surface" style={{ borderTopColor: color }}>
           <ul>
             {group.items.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} className={cx("block border-b border-line px-4 py-2.5 last:border-b-0 hover:bg-marker/40", isActive(pathname, item.href) && "bg-marker/60")}>
-                  <span className="block text-sm font-semibold">{item.label}</span>
-                  <span className="block text-xs text-muted">{item.note}</span>
+                <Link href={item.href} className={cx("flex items-start gap-3 border-b border-line px-4 py-2.5 last:border-b-0 hover:bg-surface2", isActive(pathname, item.href) && "bg-surface2")}>
+                  <span className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full border-2 border-edge" style={isActive(pathname, item.href) ? { background: color } : undefined} aria-hidden />
+                  <span>
+                    <span className="block font-display text-lg font-semibold uppercase leading-tight tracking-wide">{item.label}</span>
+                    <span className="block text-xs text-muted">{item.note}</span>
+                  </span>
                 </Link>
               </li>
             ))}
@@ -187,32 +244,16 @@ function GroupMenu({ group, pathname }: { group: NavGroup; pathname: string }) {
   );
 }
 
-function StatusTicker() {
-  const status = useQuery({ queryKey: ["agent-status"], queryFn: () => api<AgentStatus>("/agent/status"), refetchInterval: 30000 });
-  const clock = useQuery({ queryKey: ["demo-now"], queryFn: () => api<{ now: string }>("/demo/now"), refetchInterval: 15000 });
-  const { user } = useAuth();
-  const data = status.data;
-  const used = data && data.daily_limit ? Math.min(100, Math.round((data.calls_today / data.daily_limit) * 100)) : 0;
+function LineMap({ groups, pathname }: { groups: NavGroup[]; pathname: string }) {
   return (
-    <footer className="sticky bottom-0 z-30 border-t-2 border-edge bg-surface">
-      <div className="hazard h-1.5" aria-hidden />
-      <div className="mx-auto flex max-w-[1500px] flex-wrap items-center gap-x-6 gap-y-1 px-4 py-1.5 font-mono text-[11px] uppercase tracking-wider">
-        <span className="flex items-center gap-2" title={data?.model ? `Model ${data.model}` : "No Gemini key: deterministic offline mode"}>
-          <span className={cx("h-2 w-2 rounded-full", data?.mode === "live" ? "bg-good" : data?.mode === "degraded" ? "bg-warn" : "bg-muted")} aria-hidden />
-          AI {data?.mode ?? "…"}
-          {data && data.mode !== "offline" && (
-            <span className="inline-block h-1.5 w-14 bg-surface2" aria-label={`${used}% of daily AI quota used`}>
-              <span className={cx("block h-full", used > 80 ? "bg-bad" : "bg-primary")} style={{ width: `${used}%` }} />
-            </span>
-          )}
-        </span>
-        <span title="Every time-based rule uses this clock instead of the real time">
-          Demo clock <strong className="text-primary">{clock.data ? fmtDateTime(clock.data.now) : "…"}</strong>
-        </span>
-        <span className="text-muted">{user?.name} · {user?.role}</span>
-        <span className="ml-auto text-muted">Synthetic data · the assistant only proposes</span>
-      </div>
-    </footer>
+    <nav className="mx-auto hidden max-w-[1500px] items-center px-4 lg:flex" aria-label="Main">
+      {groups.map((group, index) => (
+        <Fragment key={group.label}>
+          <Station group={group} index={index} pathname={pathname} />
+          {index < groups.length - 1 && <span className="mx-2 h-[5px] min-w-10 flex-1 rounded-full" style={{ background: LINE_COLORS[index % LINE_COLORS.length] }} aria-hidden />}
+        </Fragment>
+      ))}
+    </nav>
   );
 }
 
@@ -229,12 +270,12 @@ function Palette({ groups, open, setOpen }: { groups: NavGroup[]; open: boolean;
     return () => window.removeEventListener("keydown", handler);
   }, [open, setOpen]);
   return (
-    <Command.Dialog open={open} onOpenChange={setOpen} label="Go to page" className="hard fixed left-1/2 top-24 z-50 w-[min(34rem,92vw)] -translate-x-1/2 overflow-hidden bg-surface">
-      <Command.Input placeholder="Jump to a page…" className="w-full border-b-2 border-edge bg-transparent px-4 py-3 font-mono text-sm outline-none" />
+    <Command.Dialog open={open} onOpenChange={setOpen} label="Go to page" className="fixed left-1/2 top-24 z-50 w-[min(34rem,92vw)] -translate-x-1/2 overflow-hidden border-2 border-edge bg-surface">
+      <Command.Input placeholder="Where to?" className="w-full border-b-2 border-edge bg-board px-4 py-3 font-display text-xl uppercase tracking-wider text-boardink outline-none placeholder:text-white/40" />
       <Command.List className="max-h-80 overflow-y-auto p-2">
-        <Command.Empty className="p-3 text-sm text-muted">No page matches</Command.Empty>
+        <Command.Empty className="p-3 text-sm text-muted">No stop matches</Command.Empty>
         {groups.map((group) => (
-          <Command.Group key={group.label} heading={group.label} className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-1 [&_[cmdk-group-heading]]:font-mono [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-widest [&_[cmdk-group-heading]]:text-muted">
+          <Command.Group key={group.label} heading={group.label} className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-1 [&_[cmdk-group-heading]]:font-display [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-widest [&_[cmdk-group-heading]]:text-muted">
             {group.items.map((item) => (
               <Command.Item
                 key={item.href}
@@ -243,10 +284,10 @@ function Palette({ groups, open, setOpen }: { groups: NavGroup[]; open: boolean;
                   router.push(item.href);
                   setOpen(false);
                 }}
-                className="flex cursor-pointer items-baseline justify-between gap-3 px-3 py-2 text-sm data-[selected=true]:bg-marker/60"
+                className="flex cursor-pointer items-baseline justify-between gap-3 px-3 py-2 data-[selected=true]:bg-primary data-[selected=true]:text-primaryink"
               >
-                <span className="font-semibold">{item.label}</span>
-                <span className="text-xs text-muted">{item.note}</span>
+                <span className="font-display text-lg font-semibold uppercase tracking-wide">{item.label}</span>
+                <span className="text-xs opacity-70">{item.note}</span>
               </Command.Item>
             ))}
           </Command.Group>
@@ -257,9 +298,8 @@ function Palette({ groups, open, setOpen }: { groups: NavGroup[]; open: boolean;
 }
 
 export function Shell({ children }: { children: ReactNode }) {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const pathname = usePathname();
-  const router = useRouter();
   const [dark, toggleTheme] = useTheme();
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [mobile, setMobile] = useState(false);
@@ -269,55 +309,35 @@ export function Shell({ children }: { children: ReactNode }) {
   }, [pathname]);
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-30 border-b-2 border-edge bg-bg/95 backdrop-blur">
-        <div className="mx-auto flex max-w-[1500px] items-center gap-4 px-4 py-2">
-          <Logo />
-          <nav className="ml-4 hidden items-center gap-1 lg:flex" aria-label="Main">
-            {groups.map((group) => (
-              <GroupMenu key={group.label} group={group} pathname={pathname} />
-            ))}
-          </nav>
-          <div className="ml-auto flex items-center gap-2">
-            <button onClick={() => setPaletteOpen(true)} className="chip hidden sm:inline-flex">
-              <Search className="h-3 w-3" aria-hidden /> Jump <kbd className="opacity-60">Ctrl K</kbd>
-            </button>
-            <button onClick={toggleTheme} aria-label="Toggle theme" className="hard-sm bg-surface p-1.5 hover:bg-marker/50">
-              {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </button>
-            <button
-              onClick={() => {
-                logout();
-                router.push("/login");
-              }}
-              aria-label="Sign out"
-              className="hard-sm bg-surface p-1.5 hover:bg-marker/50"
-            >
-              <LogOut className="h-4 w-4" />
-            </button>
-            <button onClick={() => setMobile(!mobile)} aria-label="Menu" aria-expanded={mobile} className="hard-sm bg-surface p-1.5 lg:hidden">
-              {mobile ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-            </button>
-          </div>
-        </div>
-        {mobile && (
-          <nav className="max-h-[70vh] overflow-y-auto border-t-2 border-edge bg-surface px-4 py-3 lg:hidden" aria-label="Mobile">
-            {groups.map((group) => (
-              <div key={group.label} className="mb-3">
-                <p className="mb-1 font-mono text-[10px] uppercase tracking-widest text-muted">{group.label}</p>
-                <div className="flex flex-wrap gap-2">
-                  {group.items.map((item) => (
-                    <Link key={item.href} href={item.href} className={cx("chip", isActive(pathname, item.href) && "bg-marker")}>
-                      {item.label}
-                    </Link>
-                  ))}
+      <header className="sticky top-0 z-30">
+        <BoardStrip dark={dark} toggleTheme={toggleTheme} onSearch={() => setPaletteOpen(true)} onMenu={() => setMobile(!mobile)} menuOpen={mobile} />
+        <div className="border-b-2 border-edge bg-surface">
+          <LineMap groups={groups} pathname={pathname} />
+          {mobile && (
+            <nav className="max-h-[65vh] overflow-y-auto px-4 py-3 lg:hidden" aria-label="Mobile">
+              {groups.map((group, index) => (
+                <div key={group.label} className="mb-3">
+                  <p className="mb-1 flex items-center gap-2 font-display text-sm font-semibold uppercase tracking-widest text-muted">
+                    <span className="h-3 w-3 rounded-full border-[3px] border-edge" style={{ background: LINE_COLORS[index % LINE_COLORS.length] }} aria-hidden />
+                    {group.label}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {group.items.map((item) => (
+                      <Link key={item.href} href={item.href} className={cx("chip", isActive(pathname, item.href) && "bg-primary text-primaryink")}>
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </nav>
-        )}
+              ))}
+            </nav>
+          )}
+        </div>
       </header>
       <main className="mx-auto w-full max-w-[1500px] flex-1 px-4 py-8">{children}</main>
-      <StatusTicker />
+      <footer className="border-t-2 border-edge bg-board px-4 py-2 text-center font-display text-[13px] uppercase tracking-[0.18em] text-white/60">
+        Synthetic data · demo campus · the assistant only proposes, people decide
+      </footer>
       <Palette groups={groups} open={paletteOpen} setOpen={setPaletteOpen} />
       <Toasts />
     </div>

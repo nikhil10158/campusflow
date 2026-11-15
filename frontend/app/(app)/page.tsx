@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, Loader2, Mic, ArrowUpRight, XCircle } from "lucide-react";
+import { ArrowRight, CheckCircle2, Loader2, Mic, XCircle } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { ProposalCard } from "@/components/ProposalCard";
@@ -129,39 +129,40 @@ export default function Concierge() {
 
   return (
     <>
-      <PageHeader kicker="Concierge" title="Say it in one sentence." subtitle="The planner turns a sentence into a venue, guest-house and parking plan, checks every rule twice, and stops. You press Submit; approvers decide." />
+      <PageHeader kicker="Concierge" title="Say it in one sentence" subtitle="The planner turns a sentence into a venue, guest-house and parking plan, checks every rule twice, and stops at the platform edge. You press Submit; approvers decide." />
 
       <form
         onSubmit={(event) => {
           event.preventDefault();
           send();
         }}
-        className="hard bg-surface"
+        className="bg-board text-white"
       >
-        <label htmlFor="ask" className="block border-b-2 border-edge bg-ink px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-bg">
-          Ask › {busy ? "working…" : "ready"}
+        <label htmlFor="ask" className="flex items-center justify-between border-b border-white/15 px-4 py-1.5 font-display text-sm uppercase tracking-[0.25em] text-boardink">
+          <span>Check-in · where to?</span>
+          <span className="text-white/50">{busy ? "Boarding…" : "Ready"}</span>
         </label>
         <div className="flex items-stretch">
           <input
             id="ask"
             value={input}
             onChange={(event) => setInput(event.target.value)}
-            placeholder="Host a 2-day AI workshop on 3–4 Dec for 80 people, 2 external speakers, 12 cars…"
-            className="min-w-0 flex-1 bg-transparent px-4 py-4 font-display text-lg outline-none placeholder:italic placeholder:text-muted sm:text-xl"
+            placeholder="Host a 2-day AI workshop on 3–4 Dec for 80 people, 2 external speakers, 12 cars"
+            className="min-w-0 flex-1 bg-transparent px-4 py-5 font-display text-2xl uppercase tracking-wide outline-none placeholder:text-white/30 sm:text-3xl"
             autoComplete="off"
           />
-          <button type="button" onClick={listen} aria-label="Voice input" className={cx("border-l-2 border-edge px-4 hover:bg-marker/50", listening && "bg-marker")}>
+          <button type="button" onClick={listen} aria-label="Voice input" className={cx("border-l border-white/15 px-4 hover:bg-white/10", listening && "bg-boardink text-board")}>
             <Mic className="h-5 w-5" />
           </button>
-          <button type="submit" disabled={busy || !input.trim()} aria-label="Send" className="flex items-center gap-2 border-l-2 border-edge bg-primary px-5 font-mono text-sm font-medium uppercase tracking-wider text-primaryink hover:brightness-110 disabled:opacity-50">
-            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUpRight className="h-4 w-4" />} Plan
+          <button type="submit" disabled={busy || !input.trim()} aria-label="Send" className="flex items-center gap-2 bg-primary px-6 font-display text-xl font-bold uppercase tracking-widest text-primaryink hover:bg-white disabled:opacity-40">
+            {busy ? <Loader2 className="h-5 w-5 animate-spin" /> : <ArrowRight className="h-5 w-5" />} Go
           </button>
         </div>
       </form>
 
       {!started && (
-        <div className="mt-5">
-          <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.2em] text-muted">Or start from one of these</p>
+        <div className="mt-6">
+          <p className="mb-2 font-display text-sm uppercase tracking-[0.25em] text-muted">Popular routes</p>
           <div className="flex flex-wrap gap-2.5">
             {EXAMPLES.map((example) => (
               <button key={example} onClick={() => run(example)} className="chip max-w-full text-left">
@@ -174,17 +175,17 @@ export default function Concierge() {
 
       {started && (
         <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
-          <Card title="Transcript">
-            <div className="max-h-[46vh] space-y-4 overflow-y-auto pr-1" aria-live="polite">
+          <Card title="Announcements">
+            <div className="max-h-[46vh] space-y-3 overflow-y-auto pr-1" aria-live="polite">
               {messages.map((message, index) => (
-                <div key={index} className={cx(message.role === "user" ? "ml-8 border-2 border-edge bg-ink px-3 py-2 text-bg" : "border-l-4 border-primary bg-surface2 px-3 py-2")}>
-                  <p className="mb-0.5 font-mono text-[10px] uppercase tracking-widest opacity-60">{message.role === "user" ? "You" : "Planner"}</p>
-                  <p className="whitespace-pre-wrap text-sm leading-relaxed">{message.text || (busy && index === messages.length - 1 ? <Loader2 className="h-4 w-4 animate-spin" aria-label="Thinking" /> : "")}</p>
+                <div key={index} className={cx("slide", message.role === "user" ? "ml-10 bg-board px-3 py-2 text-white" : "border-l-8 border-primary bg-surface2 px-3 py-2")}>
+                  <p className="font-display text-xs uppercase tracking-[0.25em] opacity-60">{message.role === "user" ? "Passenger" : "Planner"}</p>
+                  <p className="whitespace-pre-wrap leading-relaxed">{message.text || (busy && index === messages.length - 1 ? <Loader2 className="h-4 w-4 animate-spin" aria-label="Thinking" /> : "")}</p>
                 </div>
               ))}
               {clarify && (
-                <div className="border-2 border-dashed border-primary p-3">
-                  <p className="mb-2 text-sm font-semibold">{clarify.question}</p>
+                <div className="border-2 border-dashed border-edge p-3">
+                  <p className="mb-2 font-display text-lg font-semibold uppercase tracking-wide">{clarify.question}</p>
                   <div className="flex flex-wrap gap-2">
                     {clarify.options.map((option) => (
                       <button key={option} onClick={() => run(clarify.original, clarify, option)} className="chip">
@@ -198,37 +199,41 @@ export default function Concierge() {
             </div>
           </Card>
 
-          <Card title="Run log">
+          <Card title="Route">
             {plan.length === 0 && steps.length === 0 ? (
-              <p className="text-sm text-muted">The plan, every tool call and the double check appear here as they happen.</p>
+              <p className="text-sm text-muted">Each stop on the line is a step of the plan. Tool calls hang off the stop that needed them.</p>
             ) : (
-              <ol className="relative ml-2 space-y-4 border-l-2 border-edge pl-6">
+              <ol className="relative ml-3">
+                <span className="absolute bottom-3 left-[10px] top-3 w-[5px] bg-edge" aria-hidden />
                 {plan.map((step, index) => {
                   const complete = finished || index < done;
+                  const call = visibleSteps[index];
                   return (
-                    <li key={step} className="relative">
-                      <span className={cx("absolute -left-[33px] top-0.5 grid h-5 w-5 place-items-center border-2 border-edge font-mono text-[10px]", complete ? "bg-good text-primaryink" : "bg-surface")}>
-                        {complete ? "✓" : index + 1}
+                    <li key={step} className="relative pb-5 pl-9">
+                      <span className={cx("absolute left-0 top-0.5 grid h-6 w-6 place-items-center rounded-full border-[4px] border-edge", complete ? "bg-accent" : "bg-surface")} aria-hidden>
+                        {complete && <span className="h-1.5 w-1.5 rounded-full bg-edge" />}
                       </span>
-                      <p className={cx("text-sm font-semibold", !complete && "text-muted")}>{step}</p>
-                      {visibleSteps[index] && (
-                        <div className="mt-1.5 border border-line bg-surface2 p-2 font-mono text-[11px] leading-snug">
+                      <p className={cx("font-display text-xl font-semibold uppercase leading-tight tracking-wide", !complete && "text-muted")}>{step}</p>
+                      {call && (
+                        <div className="slide mt-1.5 border border-line border-l-4 border-l-primary bg-surface2 p-2 text-xs">
                           <div className="flex items-center justify-between gap-2">
-                            <span className="font-medium text-primary">{visibleSteps[index].name}()</span>
-                            {visibleSteps[index].summary === undefined ? <Loader2 className="h-3 w-3 animate-spin" aria-label="Running" /> : <Badge tone={visibleSteps[index].error ? "bad" : "good"}>{visibleSteps[index].latency?.toFixed(0)} ms</Badge>}
+                            <span className="font-mono font-medium">{call.name}()</span>
+                            {call.summary === undefined ? <Loader2 className="h-3 w-3 animate-spin" aria-label="Running" /> : <Badge tone={call.error ? "bad" : "good"}>{call.latency?.toFixed(0)} ms</Badge>}
                           </div>
-                          <p className="mt-1 font-sans text-xs text-muted">{visibleSteps[index].rationale}</p>
-                          <p className="mt-1 break-all opacity-60">{JSON.stringify(visibleSteps[index].args).slice(0, 140)}</p>
-                          {visibleSteps[index].summary && <p className={cx("mt-1", visibleSteps[index].error && "text-bad")}>→ {visibleSteps[index].summary}</p>}
+                          <p className="mt-1 text-muted">{call.rationale}</p>
+                          <p className="mt-1 break-all font-mono text-[11px] opacity-60">{JSON.stringify(call.args).slice(0, 140)}</p>
+                          {call.summary && <p className={cx("mt-1 font-medium", call.error && "text-bad")}>→ {call.summary}</p>}
                         </div>
                       )}
                     </li>
                   );
                 })}
                 {verify && (
-                  <li className="relative">
-                    <span className="absolute -left-[33px] top-0.5 grid h-5 w-5 place-items-center border-2 border-edge bg-marker font-mono text-[10px]">2×</span>
-                    <p className="mb-1 text-sm font-semibold">Checked twice, without the model</p>
+                  <li className="relative pl-9">
+                    <span className="absolute left-0 top-0.5 grid h-6 w-6 place-items-center rounded-full border-[4px] border-edge bg-primary font-display text-[11px] font-bold" aria-hidden>
+                      2×
+                    </span>
+                    <p className="mb-1 font-display text-xl font-semibold uppercase leading-tight tracking-wide">Terminus · checked twice</p>
                     <div className="flex flex-wrap gap-2 text-xs">
                       <Badge tone={verify.policy.ok ? "good" : "bad"}>
                         {verify.policy.ok ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />} policy engine
@@ -247,7 +252,6 @@ export default function Concierge() {
 
       {proposals.length > 0 && (
         <div className="mt-8 space-y-6">
-          <div className="perforation" aria-hidden />
           {proposals.map((proposal, index) => (
             <ProposalCard key={`${proposal.title}-${index}`} proposal={proposal} onDiscard={() => setProposals((current) => current.filter((_, i) => i !== index))} />
           ))}

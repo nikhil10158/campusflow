@@ -7,19 +7,18 @@ import { Button, ErrorBox, Field, Input } from "@/components/ui";
 import { api } from "@/lib/api";
 import { useAuth, type User } from "@/lib/store";
 
-const CHIPS = [
-  ["admin", "Admin"], ["hod.cse", "HoD CSE"], ["labincharge.cse", "Lab in-charge"], ["dean", "Dean"], ["estate", "Estate"],
-  ["guesthouse.mgr", "Guest house"], ["parking.officer", "Parking"], ["faculty01", "Faculty"], ["student01", "Student"], ["security01", "Security"],
+const DEPARTURES = [
+  { account: "admin", code: "ADM", place: "Command Center", platform: "1", color: "#ffd100" },
+  { account: "faculty01", code: "FAC", place: "My Day", platform: "2", color: "#00a651" },
+  { account: "student01", code: "STU", place: "My Requests", platform: "3", color: "#ff7a00" },
+  { account: "hod.cse", code: "HOD", place: "Approvals · CSE", platform: "4", color: "#d4007f" },
+  { account: "labincharge.cse", code: "LAB", place: "Approvals · labs", platform: "4", color: "#d4007f" },
+  { account: "dean", code: "DEA", place: "Approvals · events", platform: "5", color: "#d4007f" },
+  { account: "estate", code: "EST", place: "Approvals · venues", platform: "5", color: "#d4007f" },
+  { account: "guesthouse.mgr", code: "GST", place: "Approvals · stays", platform: "6", color: "#00a3ad" },
+  { account: "parking.officer", code: "PRK", place: "Approvals · parking", platform: "6", color: "#00a3ad" },
+  { account: "security01", code: "SEC", place: "Gate Scan", platform: "7", color: "#ffffff" },
 ];
-
-const POSTER = [
-  "A", "A", ".", "B", "B", "B", ".", "C",
-  ".", "D", "D", ".", "A", ".", "C", "C",
-  "B", ".", "A", "A", ".", "D", "D", ".",
-  "C", "C", ".", "B", "B", ".", "A", ".",
-];
-
-const CELL: Record<string, string> = { A: "bg-primary", B: "bg-marker", C: "bg-accent", D: "bg-ink", ".": "bg-transparent" };
 
 function landing(role: User["role"]): string {
   if (role === "security") return "/security";
@@ -27,6 +26,18 @@ function landing(role: User["role"]): string {
   if (role === "student") return "/student";
   if (role === "faculty") return "/faculty";
   return "/approvals";
+}
+
+function Flaps({ text, delay = 0 }: { text: string; delay?: number }) {
+  return (
+    <span aria-label={text} className="inline-flex">
+      {text.split("").map((char, index) => (
+        <span key={index} className="flap flip" style={{ animationDelay: `${delay + index * 30}ms`, background: char === " " ? "transparent" : undefined }} aria-hidden>
+          {char === " " ? " " : char}
+        </span>
+      ))}
+    </span>
+  );
 }
 
 export default function LoginPage() {
@@ -57,41 +68,51 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="grid min-h-screen lg:grid-cols-[1.15fr_1fr]">
-      <section className="relative flex flex-col justify-between overflow-hidden border-b-2 border-edge bg-ink p-8 text-bg lg:border-b-0 lg:border-r-2 lg:p-14">
-        <p className="font-mono text-xs uppercase tracking-[0.3em] opacity-70">Synthetic campus · demo only</p>
-        <div className="my-10">
-          <h1 className="font-display text-5xl font-semibold leading-[0.95] tracking-tight sm:text-7xl">
-            Which room is <span className="italic text-marker">really</span> free right now?
-          </h1>
-          <p className="mt-6 max-w-md text-lg leading-relaxed opacity-80">
-            Timetables, cancelled classes, ghost lectures, guest rooms and parking in one plan. The assistant proposes. People decide.
-          </p>
-        </div>
-        <div aria-hidden>
-          <div className="grid grid-cols-8 gap-1.5">
-            {POSTER.map((cell, index) => (
-              <span key={index} className={`h-9 border border-bg/25 ${CELL[cell]}`} />
-            ))}
+    <div className="min-h-screen bg-board text-white">
+      <div className="mx-auto grid min-h-screen max-w-6xl content-center gap-8 px-4 py-10 lg:grid-cols-[1.5fr_1fr]">
+        <section aria-label="Demo accounts">
+          <div className="mb-5 flex items-center gap-3">
+            <span className="relative grid h-11 w-11 place-items-center rounded-full border-[6px] border-primary" aria-hidden>
+              <span className="absolute left-[-10px] right-[-10px] top-1/2 h-3.5 -translate-y-1/2 bg-boardink" />
+              <span className="relative font-display text-xs font-bold text-board">CF</span>
+            </span>
+            <div>
+              <h1 className="font-display text-4xl font-bold uppercase leading-none tracking-[0.12em]">Campusflow</h1>
+              <p className="font-display text-sm uppercase tracking-[0.3em] text-white/50">Departures · synthetic campus</p>
+            </div>
           </div>
-          <p className="mt-3 font-mono text-[10px] uppercase tracking-widest opacity-60">Mon — Thu · periods 1–8 · one square, one class</p>
-        </div>
-      </section>
+          <div className="grid grid-cols-[3.2rem_1fr_3.2rem] items-center gap-3 border-b border-white/20 pb-1 font-display text-xs uppercase tracking-[0.25em] text-white/40 sm:grid-cols-[4rem_1fr_auto_4rem]">
+            <span>Role</span>
+            <span>Destination</span>
+            <span className="hidden sm:block">Account</span>
+            <span className="text-right">Plat.</span>
+          </div>
+          <ul>
+            {DEPARTURES.map((row, index) => (
+              <li key={row.account}>
+                <button
+                  disabled={busy}
+                  onClick={() => submit(`${row.account}@jklu.demo`)}
+                  className="group grid w-full grid-cols-[3.2rem_1fr_3.2rem] items-center gap-3 border-b border-white/10 py-2.5 text-left transition-colors hover:bg-primary hover:text-primaryink disabled:opacity-50 sm:grid-cols-[4rem_1fr_auto_4rem]"
+                >
+                  <span className="flex items-center gap-2">
+                    <span className="h-3 w-1.5" style={{ background: row.color }} aria-hidden />
+                    <span className="font-mono text-sm font-medium text-boardink group-hover:text-primaryink">{row.code}</span>
+                  </span>
+                  <span className="font-display text-2xl font-semibold uppercase tracking-wide">
+                    <Flaps text={row.place.toUpperCase()} delay={index * 70} />
+                  </span>
+                  <span className="hidden font-mono text-xs text-white/50 group-hover:text-primaryink sm:block">{row.account}</span>
+                  <span className="text-right font-mono text-lg text-boardink group-hover:text-primaryink">{row.platform}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
 
-      <section className="flex items-center justify-center p-6 lg:p-12">
-        <div className="hard w-full max-w-md bg-surface p-7">
-          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-primary">Sign in</p>
-          <h2 className="font-display text-3xl font-semibold">
-            <span className="italic">campus</span>flow
-          </h2>
-          <p className="mb-5 mt-1 text-sm text-muted">Pick a role to walk the demo, or type an account.</p>
-          <div className="mb-5 flex flex-wrap gap-2" role="group" aria-label="Demo accounts">
-            {CHIPS.map(([name, label]) => (
-              <button key={name} disabled={busy} onClick={() => submit(`${name}@jklu.demo`)} className="chip disabled:opacity-50">
-                {label}
-              </button>
-            ))}
-          </div>
+        <section className="self-center border-t-4 border-primary bg-surface p-6 text-ink">
+          <h2 className="font-display text-3xl font-bold uppercase tracking-wide">Sign in</h2>
+          <p className="mb-4 text-sm text-muted">Tap a departure on the board, or type an account here.</p>
           <form onSubmit={onSubmit} className="space-y-4">
             <Field label="Email">
               <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="admin@jklu.demo" autoComplete="username" />
@@ -101,11 +122,11 @@ export default function LoginPage() {
             </Field>
             {error ? <ErrorBox error={error} /> : null}
             <Button type="submit" busy={busy} className="w-full">
-              Enter the control room
+              Board
             </Button>
           </form>
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
   );
 }

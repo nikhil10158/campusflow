@@ -3,51 +3,48 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --bg: #f1ebdc;
-  --surface: #fbf8f0;
-  --surface-2: #e8e0cc;
-  --line: #cdc3aa;
-  --edge: #1c1a16;
-  --shadow: #1c1a16;
-  --text: #1c1a16;
-  --muted: #6a6354;
-  --primary: #d9411e;
-  --primary-ink: #fffaf0;
-  --accent: #0f6b61;
-  --marker: #f4c542;
-  --good: #1f7a4d;
-  --good-bg: #d5ebd9;
-  --warn: #8f5200;
-  --warn-bg: #fae3a8;
-  --bad: #b3261e;
-  --bad-bg: #f6d1ca;
-  --info: #0f5f80;
-  --info-bg: #cfe4ec;
-  --ghost: #6a3fa0;
-  --ghost-bg: #e6dcf5;
-  --layer-timetable: #b9a98a;
-  --layer-confirmed: #2b5b8c;
-  --layer-held: #f2b134;
-  --layer-maintenance: #8c8c86;
-  --layer-released: #5dbb9a;
-  --grid: rgba(28, 26, 22, 0.06);
+  --bg: #e3e5df;
+  --surface: #ffffff;
+  --surface-2: #eff0ec;
+  --line: #c3c8c0;
+  --edge: #111413;
+  --text: #111413;
+  --muted: #5a625c;
+  --primary: #ffd100;
+  --primary-ink: #111413;
+  --accent: #00a651;
+  --good: #0b7a3e;
+  --good-bg: #d3efdc;
+  --warn: #7f5200;
+  --warn-bg: #ffe9a8;
+  --bad: #c4161c;
+  --bad-bg: #fad4d4;
+  --info: #006c8a;
+  --info-bg: #d0ebf2;
+  --ghost: #7a2e9e;
+  --ghost-bg: #ebd9f5;
+  --layer-timetable: #a7aea6;
+  --layer-confirmed: #0b5cad;
+  --layer-held: #ffd100;
+  --layer-maintenance: #6b726c;
+  --layer-released: #00a651;
+  --board: #0a0c0b;
+  --board-ink: #ffc61a;
 }
 
 :root.dark {
-  --bg: #0d1a2c;
-  --surface: #13233a;
-  --surface-2: #1b3050;
-  --line: #2b4466;
-  --edge: #6f93c4;
-  --shadow: #040a14;
-  --text: #e9eef7;
-  --muted: #93a7c2;
-  --primary: #ffb547;
-  --primary-ink: #1a1203;
-  --accent: #5fd6c4;
-  --marker: #ffb547;
-  --good: #66d79f;
-  --good-bg: #123a2a;
+  --bg: #0f1211;
+  --surface: #171b19;
+  --surface-2: #1f2522;
+  --line: #2f3835;
+  --edge: #46514c;
+  --text: #ecefea;
+  --muted: #98a39c;
+  --primary: #ffd100;
+  --primary-ink: #111413;
+  --accent: #2fd07f;
+  --good: #5fdb98;
+  --good-bg: #12392a;
   --warn: #f3c66b;
   --warn-bg: #3d2d0b;
   --bad: #ff8f86;
@@ -56,12 +53,11 @@
   --info-bg: #0f3345;
   --ghost: #c4a0f2;
   --ghost-bg: #31224b;
-  --layer-timetable: #3f5a88;
-  --layer-confirmed: #5b8cf5;
-  --layer-held: #d9a028;
-  --layer-maintenance: #5d6a7c;
-  --layer-released: #3a9c80;
-  --grid: rgba(111, 147, 196, 0.09);
+  --layer-timetable: #4a554f;
+  --layer-confirmed: #3d8bf0;
+  --layer-held: #e0b400;
+  --layer-maintenance: #66716a;
+  --layer-released: #2a9e72;
 }
 
 @theme inline {
@@ -75,7 +71,6 @@
   --color-primary: var(--primary);
   --color-primaryink: var(--primary-ink);
   --color-accent: var(--accent);
-  --color-marker: var(--marker);
   --color-good: var(--good);
   --color-goodbg: var(--good-bg);
   --color-warn: var(--warn);
@@ -86,36 +81,32 @@
   --color-infobg: var(--info-bg);
   --color-ghost: var(--ghost);
   --color-ghostbg: var(--ghost-bg);
-  --font-sans: var(--font-plex), system-ui, sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
-  --font-display: var(--font-fraunces), Georgia, serif;
-  --radius-sm: 1px;
-  --radius-md: 2px;
-  --radius-lg: 2px;
-  --radius-xl: 3px;
-  --radius-2xl: 4px;
+  --color-board: var(--board);
+  --color-boardink: var(--board-ink);
+  --font-sans: var(--font-barlow), system-ui, sans-serif;
+  --font-mono: var(--font-chivo-mono), ui-monospace, monospace;
+  --font-display: var(--font-barlow-condensed), "Arial Narrow", sans-serif;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
 }
 
 html {
-  scroll-padding-top: 5rem;
+  scroll-padding-top: 7rem;
 }
 
 body {
-  background-color: var(--bg);
-  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size: 28px 28px;
+  background: var(--bg);
   color: var(--text);
-  font-family: var(--font-plex), system-ui, sans-serif;
+  font-family: var(--font-barlow), system-ui, sans-serif;
+  font-size: 16px;
 }
 
-.hard {
-  border: 2px solid var(--edge);
-  box-shadow: 4px 4px 0 var(--shadow);
-}
-
+.hard,
 .hard-sm {
-  border: 2px solid var(--edge);
-  box-shadow: 2px 2px 0 var(--shadow);
+  border: 1px solid var(--line);
 }
 
 .chip {
@@ -123,36 +114,41 @@ body {
   align-items: center;
   gap: 0.35rem;
   border: 1.5px solid var(--edge);
+  border-radius: 999px;
   background: var(--surface);
-  padding: 0.25rem 0.65rem;
-  font-family: var(--font-plex-mono), monospace;
-  font-size: 0.75rem;
-  box-shadow: 2px 2px 0 var(--shadow);
-  transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.08s ease;
+  padding: 0.2rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: background 0.12s ease, color 0.12s ease;
 }
 
 .chip:hover {
   background: var(--primary);
   color: var(--primary-ink);
-  transform: translate(-1px, -1px);
-  box-shadow: 3px 3px 0 var(--shadow);
+  border-color: var(--primary-ink);
 }
 
-.chip:active {
-  transform: translate(2px, 2px);
-  box-shadow: 0 0 0 var(--shadow);
+.flap {
+  display: inline-block;
+  min-width: 1.25ch;
+  padding: 0.1rem 0.28rem;
+  margin-right: 2px;
+  background: linear-gradient(#1c201e 50%, #0e100f 50%);
+  color: var(--board-ink);
+  font-family: var(--font-chivo-mono), monospace;
+  font-weight: 500;
+  text-align: center;
+  position: relative;
 }
 
-.marker {
-  background-image: linear-gradient(transparent 62%, var(--marker) 62%, var(--marker) 92%, transparent 92%);
-}
-
-.hazard {
-  background-image: repeating-linear-gradient(-45deg, var(--edge) 0 8px, var(--marker) 8px 16px);
-}
-
-.perforation {
-  border-top: 2px dashed var(--edge);
+.flap::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: #000;
 }
 
 .skeleton {
@@ -166,16 +162,26 @@ body {
   100% { background-position: 0 50%; }
 }
 
-@keyframes rise {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes flip {
+  0% { transform: rotateX(90deg); opacity: 0; }
+  100% { transform: rotateX(0); opacity: 1; }
 }
 
-.rise {
-  animation: rise 0.28s ease both;
+.flip {
+  animation: flip 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  transform-origin: top;
+}
+
+@keyframes slide {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.slide {
+  animation: slide 0.3s ease both;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .skeleton, .rise { animation: none; }
+  .skeleton, .flip, .slide { animation: none; }
   .chip { transition: none; }
 }
