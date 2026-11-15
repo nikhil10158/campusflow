@@ -138,7 +138,7 @@ export function ProposalCard({ proposal: initial, onDiscard }: { proposal: Propo
       )}
       {alternatives?.length > 0 && (
         <div className="mt-4">
-          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">Ranked alternatives</h3>
+          <h3 className="mb-2 text-xs font-semibold text-muted">Ranked alternatives</h3>
           <ol className="space-y-2">
             {alternatives.map((alternative, index) => (
               <li key={index} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-line p-2 text-sm">

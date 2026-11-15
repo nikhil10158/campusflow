@@ -1,10 +1,10 @@
 "use client";
 
-import { ArrowRight, CheckCircle2, Loader2, Mic, XCircle } from "lucide-react";
+import { ArrowUp, CheckCircle2, Circle, Loader2, Mic, RotateCcw, Sparkles, XCircle } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { ProposalCard } from "@/components/ProposalCard";
-import { Badge, Button, Card, Notice, PageHeader, cx } from "@/components/ui";
+import { Badge, Card, Notice, cx } from "@/components/ui";
 import { streamAgent } from "@/lib/agent";
 import { useToasts } from "@/lib/store";
 import type { AgentEvent, Proposal } from "@/lib/types";
@@ -32,12 +32,12 @@ interface Clarify {
 }
 
 const EXAMPLES = [
-  "Host a 2-day AI workshop on 3–4 Dec for 80 people, 2 external speakers staying 2 nights, 12 cars",
-  "Find a free classroom tomorrow 2–4 pm for 60",
-  "Find a common slot for Sem 5 CSE A and B for a 1 hour quiz next week",
-  "Book lab L-3 on 20 Nov 10 to 1",
-  "What is the lead time for an amphitheatre?",
-  "Lab Complex 1 closed Wed–Thu for repairs",
+  { title: "Plan a whole event", text: "Host a 2-day AI workshop on 3–4 Dec for 80 people, 2 external speakers staying 2 nights, 12 cars" },
+  { title: "Find a free room", text: "Find a free classroom tomorrow 2–4 pm for 60" },
+  { title: "Find a time for a quiz", text: "Find a common slot for Sem 5 CSE A and B for a 1 hour quiz next week" },
+  { title: "Book a lab", text: "Book lab L-3 on 20 Nov 10 to 1" },
+  { title: "Ask about the rules", text: "What is the lead time for an amphitheatre?" },
+  { title: "Handle a closure (admin)", text: "Lab Complex 1 closed Wed–Thu for repairs" },
 ];
 
 interface SpeechRecognitionLike {
@@ -158,45 +158,55 @@ export default function Concierge() {
 
   return (
     <>
-      <PageHeader help={["Type what you need in plain words, or tap a popular route.", "Watch the route on the right: each stop is a step the planner takes.", "Review the proposal that appears, then press Submit. Nothing is booked until you do."]} kicker="Concierge" title="Say it in one sentence" subtitle="The planner turns a sentence into a venue, guest-house and parking plan, checks every rule twice, and stops at the platform edge. You press Submit; approvers decide." />
+      <div className="mx-auto max-w-3xl pb-6 pt-2 text-center">
+        <span className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-2xl bg-goodbg text-primary">
+          <Sparkles className="h-6 w-6" aria-hidden />
+        </span>
+        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">What do you need?</h1>
+        <p className="mt-3 text-lg text-muted">Describe it in your own words. The assistant finds free rooms, guest rooms and parking, checks the rules, and prepares a request for you to review.</p>
+      </div>
 
       <form
         onSubmit={(event) => {
           event.preventDefault();
           send();
         }}
-        className="bg-board text-white"
+        className="mx-auto flex max-w-3xl items-center gap-2 rounded-2xl border border-edge bg-surface p-2 shadow-md focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/25"
       >
-        <label htmlFor="ask" className="flex items-center justify-between border-b border-white/15 px-4 py-1.5 font-display text-sm uppercase tracking-[0.25em] text-boardink">
-          <span>Check-in · where to?</span>
-          <span className="flex items-center gap-3 text-white/60">{started && !busy && <button type="button" onClick={startOver} className="underline underline-offset-4 hover:text-white">Start over</button>}{busy ? "Boarding…" : <>Press <kbd className="border border-white/30 px-1">/</kbd> to focus</>}</span>
-        </label>
-        <div className="flex items-stretch">
-          <input
-            id="ask"
-            ref={askBox}
-            value={input}
-            onChange={(event) => setInput(event.target.value)}
-            placeholder="Host a 2-day AI workshop on 3–4 Dec for 80 people, 2 external speakers, 12 cars"
-            className="min-w-0 flex-1 bg-transparent px-4 py-5 font-display text-2xl uppercase tracking-wide outline-none placeholder:text-white/30 sm:text-3xl"
-            autoComplete="off"
-          />
-          <button type="button" onClick={listen} aria-label="Voice input" className={cx("border-l border-white/15 px-4 hover:bg-white/10", listening && "bg-boardink text-board")}>
-            <Mic className="h-5 w-5" />
-          </button>
-          <button type="submit" disabled={busy || !input.trim()} aria-label="Send" className="flex items-center gap-2 bg-primary px-6 font-display text-xl font-bold uppercase tracking-widest text-primaryink hover:bg-white disabled:opacity-40">
-            {busy ? <Loader2 className="h-5 w-5 animate-spin" /> : <ArrowRight className="h-5 w-5" />} Go
-          </button>
-        </div>
+        <input
+          id="ask"
+          ref={askBox}
+          value={input}
+          onChange={(event) => setInput(event.target.value)}
+          placeholder="For example: a free classroom tomorrow 2–4 pm for 60 students"
+          aria-label="Your request"
+          className="min-w-0 flex-1 bg-transparent px-3 py-3 text-lg outline-none placeholder:text-muted/70"
+          autoComplete="off"
+        />
+        <button type="button" onClick={listen} aria-label="Speak your request" className={cx("grid h-11 w-11 place-items-center rounded-xl text-muted hover:bg-surface2", listening && "bg-goodbg text-primary")}>
+          <Mic className="h-5 w-5" />
+        </button>
+        <button type="submit" disabled={busy || !input.trim()} aria-label="Send" className="grid h-11 w-11 place-items-center rounded-xl bg-primary text-primaryink hover:brightness-110 disabled:opacity-40">
+          {busy ? <Loader2 className="h-5 w-5 animate-spin" /> : <ArrowUp className="h-5 w-5" />}
+        </button>
       </form>
+      <p className="mx-auto mt-2 max-w-3xl text-center text-sm text-muted">
+        Press <kbd className="rounded bg-surface2 px-1.5">/</kbd> to start typing.
+        {started && !busy && (
+          <button onClick={startOver} className="ml-3 inline-flex items-center gap-1 font-medium text-primary hover:underline">
+            <RotateCcw className="h-3.5 w-3.5" /> Start over
+          </button>
+        )}
+      </p>
 
       {!started && (
-        <div className="mt-6">
-          <p className="mb-2 font-display text-sm uppercase tracking-[0.25em] text-muted">Popular routes</p>
-          <div className="flex flex-wrap gap-2.5">
+        <div className="mx-auto mt-8 max-w-3xl">
+          <p className="mb-3 text-sm font-semibold text-muted">Try one of these</p>
+          <div className="grid gap-3 sm:grid-cols-2">
             {EXAMPLES.map((example) => (
-              <button key={example} onClick={() => run(example)} className="chip max-w-full text-left">
-                {example}
+              <button key={example.text} onClick={() => run(example.text)} className="rounded-xl border border-line bg-surface p-4 text-left transition hover:border-primary hover:shadow-md">
+                <span className="block font-semibold">{example.title}</span>
+                <span className="mt-1 block text-[15px] leading-snug text-muted">{example.text}</span>
               </button>
             ))}
           </div>
@@ -204,18 +214,17 @@ export default function Concierge() {
       )}
 
       {started && (
-        <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
-          <Card title="Announcements">
+        <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+          <Card title="Conversation">
             <div className="max-h-[46vh] space-y-3 overflow-y-auto pr-1" aria-live="polite">
               {messages.map((message, index) => (
-                <div key={index} className={cx("slide", message.role === "user" ? "ml-10 bg-board px-3 py-2 text-white" : "border-l-8 border-primary bg-surface2 px-3 py-2")}>
-                  <p className="font-display text-xs uppercase tracking-[0.25em] opacity-60">{message.role === "user" ? "Passenger" : "Planner"}</p>
-                  <p className="whitespace-pre-wrap leading-relaxed">{message.text || (busy && index === messages.length - 1 ? <Loader2 className="h-4 w-4 animate-spin" aria-label="Thinking" /> : "")}</p>
+                <div key={index} className={cx("slide max-w-[92%] rounded-2xl px-4 py-2.5 leading-relaxed", message.role === "user" ? "ml-auto bg-primary text-primaryink" : "bg-surface2")}>
+                  <p className="whitespace-pre-wrap">{message.text || (busy && index === messages.length - 1 ? <Loader2 className="h-4 w-4 animate-spin" aria-label="Thinking" /> : "")}</p>
                 </div>
               ))}
               {clarify && (
-                <div className="border-2 border-dashed border-edge p-3">
-                  <p className="mb-2 font-display text-lg font-semibold uppercase tracking-wide">{clarify.question}</p>
+                <div className="rounded-xl border border-primary/40 bg-goodbg/50 p-3.5">
+                  <p className="mb-2 font-medium">{clarify.question}</p>
                   <div className="flex flex-wrap gap-2">
                     {clarify.options.map((option) => (
                       <button key={option} onClick={() => run(clarify.original, clarify, option)} className="chip">
@@ -229,48 +238,42 @@ export default function Concierge() {
             </div>
           </Card>
 
-          <Card title="Route">
+          <Card title="What the assistant is doing">
             {plan.length === 0 && steps.length === 0 ? (
-              <p className="text-sm text-muted">Each stop on the line is a step of the plan. Tool calls hang off the stop that needed them.</p>
+              <p className="text-[15px] text-muted">The steps appear here as the assistant works, so you can see how it got to its answer.</p>
             ) : (
-              <ol className="relative ml-3">
-                <span className="absolute bottom-3 left-[10px] top-3 w-[5px] bg-edge" aria-hidden />
+              <ol className="space-y-4">
                 {plan.map((step, index) => {
                   const complete = finished || index < done;
                   const call = visibleSteps[index];
                   return (
-                    <li key={step} className="relative pb-5 pl-9">
-                      <span className={cx("absolute left-0 top-0.5 grid h-6 w-6 place-items-center rounded-full border-[4px] border-edge", complete ? "bg-accent" : "bg-surface")} aria-hidden>
-                        {complete && <span className="h-1.5 w-1.5 rounded-full bg-edge" />}
-                      </span>
-                      <p className={cx("font-display text-xl font-semibold uppercase leading-tight tracking-wide", !complete && "text-muted")}>{step}</p>
-                      {call && (
-                        <div className="slide mt-1.5 border border-line border-l-4 border-l-primary bg-surface2 p-2 text-xs">
-                          <div className="flex items-center justify-between gap-2">
-                            <span className="font-mono font-medium">{call.name}()</span>
-                            {call.summary === undefined ? <Loader2 className="h-3 w-3 animate-spin" aria-label="Running" /> : <Badge tone={call.error ? "bad" : "good"}>{call.latency?.toFixed(0)} ms</Badge>}
-                          </div>
-                          <p className="mt-1 text-muted">{call.rationale}</p>
-                          <p className="mt-1 break-all font-mono text-xs opacity-60">{JSON.stringify(call.args).slice(0, 140)}</p>
-                          {call.summary && <p className={cx("mt-1 font-medium", call.error && "text-bad")}>→ {call.summary}</p>}
-                        </div>
-                      )}
+                    <li key={step} className="flex gap-3">
+                      {complete ? <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-good" aria-hidden /> : <Circle className="mt-0.5 h-5 w-5 shrink-0 text-edge" aria-hidden />}
+                      <div className="min-w-0 flex-1">
+                        <p className={cx("font-medium", !complete && "text-muted")}>{step}</p>
+                        {call && (
+                          <details className="mt-1 rounded-lg bg-surface2 px-3 py-2 text-sm">
+                            <summary className="flex cursor-pointer items-center justify-between gap-2">
+                              <span className="text-muted">{call.summary ?? "Working…"}</span>
+                              {call.summary === undefined ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-label="Running" /> : <Badge tone={call.error ? "bad" : "good"}>{call.latency?.toFixed(0)} ms</Badge>}
+                            </summary>
+                            <p className="mt-2 text-muted">{call.rationale}</p>
+                            <p className="mt-1 break-all font-mono text-xs text-muted">{call.name}({JSON.stringify(call.args).slice(0, 140)})</p>
+                          </details>
+                        )}
+                      </div>
                     </li>
                   );
                 })}
                 {verify && (
-                  <li className="relative pl-9">
-                    <span className="absolute left-0 top-0.5 grid h-6 w-6 place-items-center rounded-full border-[4px] border-edge bg-primary font-display text-xs font-bold" aria-hidden>
-                      2×
-                    </span>
-                    <p className="mb-1 font-display text-xl font-semibold uppercase leading-tight tracking-wide">Terminus · checked twice</p>
-                    <div className="flex flex-wrap gap-2 text-xs">
-                      <Badge tone={verify.policy.ok ? "good" : "bad"}>
-                        {verify.policy.ok ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />} policy engine
-                      </Badge>
-                      <Badge tone={verify.validator.ok ? "good" : "bad"}>
-                        {verify.validator.ok ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />} independent validator
-                      </Badge>
+                  <li className="flex gap-3">
+                    {verify.policy.ok && verify.validator.ok ? <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-good" aria-hidden /> : <XCircle className="mt-0.5 h-5 w-5 shrink-0 text-bad" aria-hidden />}
+                    <div>
+                      <p className="font-medium">Checked twice, without AI</p>
+                      <div className="mt-1 flex flex-wrap gap-2">
+                        <Badge tone={verify.policy.ok ? "good" : "bad"}>Rules {verify.policy.ok ? "pass" : "fail"}</Badge>
+                        <Badge tone={verify.validator.ok ? "good" : "bad"}>Independent check {verify.validator.ok ? "passes" : "fails"}</Badge>
+                      </div>
                     </div>
                   </li>
                 )}
@@ -281,8 +284,8 @@ export default function Concierge() {
       )}
 
       {proposals.length > 0 && (
-        <div ref={proposalBox} className="mt-8 scroll-mt-32 space-y-6">
-          <p className="font-display text-sm uppercase tracking-[0.25em] text-muted">Proposal ready · review, then submit</p>
+        <div ref={proposalBox} className="mt-8 scroll-mt-24 space-y-5">
+          <h2 className="text-2xl font-semibold tracking-tight">Your request is ready to review</h2>
           {proposals.map((proposal, index) => (
             <ProposalCard key={`${proposal.title}-${index}`} proposal={proposal} onDiscard={() => setProposals((current) => current.filter((_, i) => i !== index))} />
           ))}
@@ -290,7 +293,7 @@ export default function Concierge() {
       )}
       {finished && proposals.length === 0 && !clarify && started && (
         <div className="mt-6">
-          <Notice tone="info">No state was changed. When a proposal appears you decide whether to submit it.</Notice>
+          <Notice tone="info">Nothing was booked or changed. When a request is prepared you decide whether to submit it.</Notice>
         </div>
       )}
     </>

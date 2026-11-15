@@ -1,5 +1,6 @@
 "use client";
 
+import { Car, ClipboardCheck, GraduationCap, KeyRound, MapPin, ShieldCheck, Shield, Hotel, Landmark, Presentation, Settings2, type LucideIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
@@ -7,17 +8,17 @@ import { Button, ErrorBox, Field, Input } from "@/components/ui";
 import { api } from "@/lib/api";
 import { useAuth, type User } from "@/lib/store";
 
-const DEPARTURES = [
-  { account: "admin", code: "ADM", place: "Command Center", platform: "1", color: "#ffd100" },
-  { account: "faculty01", code: "FAC", place: "My Day", platform: "2", color: "#00a651" },
-  { account: "student01", code: "STU", place: "My Requests", platform: "3", color: "#ff7a00" },
-  { account: "hod.cse", code: "HOD", place: "Approvals · CSE", platform: "4", color: "#d4007f" },
-  { account: "labincharge.cse", code: "LAB", place: "Approvals · labs", platform: "4", color: "#d4007f" },
-  { account: "dean", code: "DEA", place: "Approvals · events", platform: "5", color: "#d4007f" },
-  { account: "estate", code: "EST", place: "Approvals · venues", platform: "5", color: "#d4007f" },
-  { account: "guesthouse.mgr", code: "GST", place: "Approvals · stays", platform: "6", color: "#00a3ad" },
-  { account: "parking.officer", code: "PRK", place: "Approvals · parking", platform: "6", color: "#00a3ad" },
-  { account: "security01", code: "SEC", place: "Gate Scan", platform: "7", color: "#ffffff" },
+const ROLES: { account: string; title: string; text: string; icon: LucideIcon }[] = [
+  { account: "admin", title: "Administrator", text: "Runs the campus: imports, closures, reports", icon: Settings2 },
+  { account: "faculty01", title: "Faculty", text: "Books rooms and requests extra classes", icon: Presentation },
+  { account: "student01", title: "Student club lead", text: "Requests rooms with a faculty sponsor", icon: GraduationCap },
+  { account: "hod.cse", title: "Head of department", text: "Approves lab and department requests", icon: ClipboardCheck },
+  { account: "labincharge.cse", title: "Lab in-charge", text: "First approver for lab bookings", icon: KeyRound },
+  { account: "dean", title: "Dean", text: "Approves large events", icon: Landmark },
+  { account: "estate", title: "Estate office", text: "Approves amphitheatre bookings", icon: Shield },
+  { account: "guesthouse.mgr", title: "Guest house manager", text: "Approves stays and the waitlist", icon: Hotel },
+  { account: "parking.officer", title: "Parking officer", text: "Approves parking and releases no-shows", icon: Car },
+  { account: "security01", title: "Security", text: "Checks parking passes at the gate", icon: ShieldCheck },
 ];
 
 function landing(role: User["role"]): string {
@@ -26,18 +27,6 @@ function landing(role: User["role"]): string {
   if (role === "student") return "/student";
   if (role === "faculty") return "/faculty";
   return "/approvals";
-}
-
-function Flaps({ text, delay = 0 }: { text: string; delay?: number }) {
-  return (
-    <span aria-label={text} className="inline-flex">
-      {text.split("").map((char, index) => (
-        <span key={index} className="flap flip" style={{ animationDelay: `${delay + index * 30}ms`, background: char === " " ? "transparent" : undefined }} aria-hidden>
-          {char === " " ? " " : char}
-        </span>
-      ))}
-    </span>
-  );
 }
 
 export default function LoginPage() {
@@ -68,51 +57,36 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-board text-white">
-      <div className="mx-auto grid min-h-screen max-w-6xl content-center gap-8 px-4 py-10 lg:grid-cols-[1.5fr_1fr]">
-        <section aria-label="Demo accounts">
-          <div className="mb-5 flex items-center gap-3">
-            <span className="relative grid h-11 w-11 place-items-center rounded-full border-[6px] border-primary" aria-hidden>
-              <span className="absolute left-[-10px] right-[-10px] top-1/2 h-3.5 -translate-y-1/2 bg-boardink" />
-              <span className="relative font-display text-xs font-bold text-board">CF</span>
+    <div className="min-h-screen">
+      <div className="mx-auto grid min-h-screen max-w-6xl content-center gap-10 px-5 py-10 lg:grid-cols-[1.35fr_1fr]">
+        <section>
+          <div className="mb-6 flex items-center gap-3">
+            <span className="grid h-11 w-11 place-items-center rounded-xl bg-primary text-primaryink">
+              <MapPin className="h-6 w-6" aria-hidden />
             </span>
-            <div>
-              <h1 className="font-display text-4xl font-bold uppercase leading-none tracking-[0.12em]">Campusflow</h1>
-              <p className="font-display text-sm uppercase tracking-[0.3em] text-white/50">Departures · synthetic campus</p>
-            </div>
+            <span className="text-2xl font-semibold tracking-tight">CampusFlow</span>
           </div>
-          <div className="grid grid-cols-[3.2rem_1fr_3.2rem] items-center gap-3 border-b border-white/20 pb-1 font-display text-xs uppercase tracking-[0.25em] text-white/40 sm:grid-cols-[4rem_1fr_auto_4rem]">
-            <span>Role</span>
-            <span>Destination</span>
-            <span className="hidden sm:block">Account</span>
-            <span className="text-right">Plat.</span>
-          </div>
-          <ul>
-            {DEPARTURES.map((row, index) => (
-              <li key={row.account}>
-                <button
-                  disabled={busy}
-                  onClick={() => submit(`${row.account}@jklu.demo`)}
-                  className="group grid w-full grid-cols-[3.2rem_1fr_3.2rem] items-center gap-3 border-b border-white/10 py-2.5 text-left transition-colors hover:bg-primary hover:text-primaryink disabled:opacity-50 sm:grid-cols-[4rem_1fr_auto_4rem]"
-                >
-                  <span className="flex items-center gap-2">
-                    <span className="h-3 w-1.5" style={{ background: row.color }} aria-hidden />
-                    <span className="font-mono text-sm font-medium text-boardink group-hover:text-primaryink">{row.code}</span>
-                  </span>
-                  <span className="font-display text-2xl font-semibold uppercase tracking-wide">
-                    <Flaps text={row.place.toUpperCase()} delay={index * 70} />
-                  </span>
-                  <span className="hidden font-mono text-xs text-white/50 group-hover:text-primaryink sm:block">{row.account}</span>
-                  <span className="text-right font-mono text-lg text-boardink group-hover:text-primaryink">{row.platform}</span>
-                </button>
-              </li>
+          <h1 className="max-w-xl text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">Find and book campus spaces without the back-and-forth.</h1>
+          <p className="mt-4 max-w-xl text-lg leading-relaxed text-muted">Rooms, labs, guest rooms and parking in one place. Ask in plain words, see what is really free, and let the right people approve.</p>
+          <h2 className="mb-3 mt-8 text-sm font-semibold uppercase tracking-wide text-muted">Try the demo as…</h2>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {ROLES.map((role) => (
+              <button key={role.account} disabled={busy} onClick={() => submit(`${role.account}@jklu.demo`)} className="group flex items-start gap-3 rounded-xl border border-line bg-surface p-3.5 text-left transition hover:border-primary hover:shadow-md disabled:opacity-50">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-goodbg text-primary">
+                  <role.icon className="h-5 w-5" aria-hidden />
+                </span>
+                <span>
+                  <span className="block font-semibold">{role.title}</span>
+                  <span className="block text-sm leading-snug text-muted">{role.text}</span>
+                </span>
+              </button>
             ))}
-          </ul>
+          </div>
         </section>
 
-        <section className="self-center border-t-4 border-primary bg-surface p-6 text-ink">
-          <h2 className="font-display text-3xl font-bold uppercase tracking-wide">Sign in</h2>
-          <p className="mb-4 text-sm text-muted">Tap a departure on the board, or type an account here.</p>
+        <section className="self-center rounded-2xl border border-line bg-surface p-7 shadow-sm">
+          <h2 className="text-2xl font-semibold">Sign in</h2>
+          <p className="mb-5 mt-1 text-[15px] text-muted">Pick a role on the left, or enter an account here.</p>
           <form onSubmit={onSubmit} className="space-y-4">
             <Field label="Email">
               <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="admin@jklu.demo" autoComplete="username" />
@@ -121,10 +95,11 @@ export default function LoginPage() {
               <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" />
             </Field>
             {error ? <ErrorBox error={error} /> : null}
-            <Button type="submit" busy={busy} className="w-full">
-              Board
+            <Button type="submit" busy={busy} className="w-full py-2.5 text-base">
+              Sign in
             </Button>
           </form>
+          <p className="mt-5 text-center text-sm text-muted">All data here is synthetic. Nothing is real.</p>
         </section>
       </div>
     </div>

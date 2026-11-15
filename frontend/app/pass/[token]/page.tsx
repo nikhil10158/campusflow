@@ -20,7 +20,7 @@ export default function PassPage({ params }: { params: Promise<{ token: string }
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-sm rounded-2xl border border-line bg-surface p-8 text-center shadow-lg">
-        <p className="mb-2 text-xs uppercase tracking-widest text-muted">CampusFlow pass check · synthetic data</p>
+        <p className="mb-2 text-xs text-muted">CampusFlow pass check · synthetic data</p>
         {isPending ? <div className="skeleton mx-auto h-16 w-40" /> : <div className="text-5xl font-bold" style={{ color: COLOR[result ?? "NOT_FOUND"] }}>{(result ?? "").replace(/_/g, " ")}</div>}
         {data?.pass && (
           <div className="mt-4 text-sm">

@@ -27,7 +27,7 @@ function plusMinutes(time: string, minutes: number): string {
 
 function Choice({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
-    <button type="button" onClick={onClick} aria-pressed={active} className={cx("chip", active && "!bg-edge !text-bg")}>
+    <button type="button" onClick={onClick} aria-pressed={active} className={cx("chip", active && "!border-primary !bg-goodbg !text-primary")}>
       {children}
     </button>
   );
@@ -113,7 +113,7 @@ export default function FindPage() {
             }}
           >
             <div>
-              <p className="mb-1.5 font-display text-[13px] font-semibold uppercase tracking-wider text-muted">Day</p>
+              <p className="mb-1.5 font-display text-[13px] font-semibold text-muted">Day</p>
               <div className="mb-2 flex flex-wrap gap-2">
                 {today && ([["Today", today], ["Tomorrow", addDays(today, 1)], ["In 2 days", addDays(today, 2)], ["Next week", addDays(today, 7)]] as const).map(([label, value]) => (
                   <Choice key={label} active={date === value} onClick={() => setDay(value)}>{label}</Choice>
@@ -123,7 +123,7 @@ export default function FindPage() {
               {whenLabel && <p className="mt-1 text-sm text-muted">{whenLabel}</p>}
             </div>
             <div>
-              <p className="mb-1.5 font-display text-[13px] font-semibold uppercase tracking-wider text-muted">Time</p>
+              <p className="mb-1.5 font-display text-[13px] font-semibold text-muted">Time</p>
               <div className="grid grid-cols-2 gap-2">
                 <Input type="time" value={start} onChange={(e) => setStart(e.target.value)} aria-label="Start time" />
                 <Input type="time" value={end} onChange={(e) => setEnd(e.target.value)} aria-label="End time" />
@@ -135,7 +135,7 @@ export default function FindPage() {
               </div>
             </div>
             <div>
-              <p className="mb-1.5 font-display text-[13px] font-semibold uppercase tracking-wider text-muted">How many people?</p>
+              <p className="mb-1.5 font-display text-[13px] font-semibold text-muted">How many people?</p>
               <div className="flex flex-wrap items-center gap-2">
                 {SIZES.map((size) => (
                   <Choice key={size} active={attendees === size} onClick={() => setAttendees(size)}>{size}</Choice>
@@ -144,7 +144,7 @@ export default function FindPage() {
               </div>
             </div>
             <fieldset>
-              <legend className="mb-1.5 font-display text-[13px] font-semibold uppercase tracking-wider text-muted">What kind of room?</legend>
+              <legend className="mb-1.5 font-display text-[13px] font-semibold text-muted">What kind of room?</legend>
               <div className="flex flex-wrap gap-2">
                 {TYPES.map(([value, label]) => (
                   <Choice key={value} active={types.includes(value)} onClick={() => toggle(types, value, setTypes)}>{label}</Choice>
@@ -152,7 +152,7 @@ export default function FindPage() {
               </div>
             </fieldset>
             <details className="border border-line p-3">
-              <summary className="cursor-pointer font-display text-[15px] font-semibold uppercase tracking-wider">More options</summary>
+              <summary className="cursor-pointer font-display text-[15px] font-semibold">More options</summary>
               <div className="mt-3 space-y-3">
                 <fieldset>
                   <legend className="mb-1.5 text-sm text-muted">Nice to have</legend>
@@ -218,7 +218,7 @@ export default function FindPage() {
                   <Card key={hit.venue_id} className={index === 0 ? "ring-2 ring-primary" : ""}>
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        {index === 0 && <p className="mb-1 font-display text-xs font-semibold uppercase tracking-[0.2em] text-muted">Best match</p>}
+                        {index === 0 && <p className="mb-1 font-display text-xs font-semibold text-muted">Best match</p>}
                         <div className="font-display text-4xl font-bold leading-none">{hit.code}</div>
                         <div className="mt-1 text-[15px] text-muted">{hit.name} · seats {hit.capacity}</div>
                       </div>

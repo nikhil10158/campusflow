@@ -1,5 +1,6 @@
 "use client";
 
+import { Sparkles, ClipboardCheck, Upload, BarChart3 } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useState } from "react";
@@ -55,10 +56,10 @@ export default function AdminHome() {
     <>
       <PageHeader title="Command Center" subtitle="Everything time-based follows the demo clock, so holds, escalations and no-shows can be shown on demand." />
       <QuickTiles items={[
-        { href: "/", title: "Ask the planner", text: "Describe an event or a room need in one sentence." },
-        { href: "/approvals", title: "Approvals", text: "Decisions waiting for you.", badge: inbox.data?.length ? <Badge tone="warn">{inbox.data.length} waiting</Badge> : undefined },
-        { href: "/admin/timetables", title: "Import timetable", text: "Upload a CSV, Excel or PDF and review changes." },
-        { href: "/admin/reports", title: "Ghost classes", text: "Free rooms nobody is using." },
+        { href: "/", title: "Ask the planner", icon: Sparkles, text: "Describe an event or a room need in one sentence." },
+        { href: "/approvals", title: "Approvals", icon: ClipboardCheck, text: "Decisions waiting for you.", badge: inbox.data?.length ? <Badge tone="warn">{inbox.data.length} waiting</Badge> : undefined },
+        { href: "/admin/timetables", title: "Import timetable", icon: Upload, text: "Upload a CSV, Excel or PDF and review changes." },
+        { href: "/admin/reports", title: "Ghost classes", icon: BarChart3, text: "Free rooms nobody is using." },
       ]} />
       {kpis.isPending ? <LoadingRows rows={2} /> : kpis.isError ? <ErrorBox error={kpis.error} /> : (
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
