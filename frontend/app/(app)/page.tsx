@@ -1,6 +1,6 @@
 "use client";
 
-import { Bot, CheckCircle2, Loader2, Mic, Send, Sparkles, User, XCircle } from "lucide-react";
+import { CheckCircle2, Loader2, Mic, ArrowUpRight, XCircle } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { ProposalCard } from "@/components/ProposalCard";
@@ -68,7 +68,7 @@ export default function Concierge() {
   const push = useToasts((state) => state.push);
 
   useEffect(() => {
-    bottom.current?.scrollIntoView({ behavior: "smooth" });
+    bottom.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }, [messages, steps]);
 
   async function run(text: string, clarification: Clarify | null = null, answer = "") {
@@ -84,7 +84,7 @@ export default function Concierge() {
     setFinished(false);
     const original = clarification ? clarification.original : text;
     try {
-      await streamAgent(clarification ? original : text, clarification ? { original, answer, field: clarification.field } : null, (event) => {
+      await streamAgent(original, clarification ? { original, answer, field: clarification.field } : null, (event) => {
         if (event.type === "plan") setPlan(event.steps);
         else if (event.type === "plan_progress") setDone(event.done);
         else if (event.type === "tool_call") setSteps((current) => [...current, { id: event.id, name: event.name, args: event.args, rationale: event.rationale }]);
@@ -92,7 +92,6 @@ export default function Concierge() {
         else if (event.type === "verify") setVerify(event);
         else if (event.type === "proposal") setProposals((current) => [...current, event.proposal]);
         else if (event.type === "clarify") setClarify({ question: event.question, options: event.options, field: event.field, original });
-        else if (event.type === "refusal") setMessages((current) => current);
         else if (event.type === "answer_delta") setMessages((current) => current.map((m, i) => (i === current.length - 1 ? { ...m, text: m.text + event.text } : m)));
         else if (event.type === "done") setFinished(true);
       });
@@ -125,118 +124,140 @@ export default function Concierge() {
     recognition.start();
   }
 
+  const visibleSteps = steps.filter((step) => step.name !== "declare_plan");
+  const started = messages.length > 0;
+
   return (
     <>
-      <PageHeader title="Concierge" subtitle="One sentence becomes a validated plan: venue, guest house and parking. The assistant only proposes; you press Submit, and approvers decide." />
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Card className="flex h-[70vh] flex-col" title={<span className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary" /> Ask for anything</span>}>
-          <div className="flex-1 space-y-3 overflow-y-auto pr-1" aria-live="polite">
-            {messages.length === 0 && (
-              <div className="space-y-2">
-                <p className="text-sm text-muted">Try one of these:</p>
-                {EXAMPLES.map((example) => (
-                  <button key={example} onClick={() => run(example)} className="block w-full rounded-lg border border-line p-2 text-left text-sm hover:bg-surface2">
-                    {example}
-                  </button>
-                ))}
-              </div>
-            )}
-            {messages.map((message, index) => (
-              <div key={index} className={cx("flex gap-2", message.role === "user" && "justify-end")}>
-                {message.role === "assistant" && <Bot className="mt-1 h-4 w-4 shrink-0 text-primary" aria-hidden />}
-                <div className={cx("max-w-[85%] whitespace-pre-wrap rounded-xl px-3 py-2 text-sm", message.role === "user" ? "bg-primary text-primaryink" : "bg-surface2")}>
-                  {message.text || (busy && index === messages.length - 1 ? <Loader2 className="h-4 w-4 animate-spin" aria-label="Thinking" /> : "")}
-                </div>
-                {message.role === "user" && <User className="mt-1 h-4 w-4 shrink-0 text-muted" aria-hidden />}
-              </div>
-            ))}
-            {clarify && (
-              <div className="rounded-xl border border-primary/40 p-3">
-                <p className="mb-2 text-sm font-medium">{clarify.question}</p>
-                <div className="flex flex-wrap gap-2">
-                  {clarify.options.map((option) => (
-                    <button key={option} onClick={() => run(clarify.original, clarify, option)} className="rounded-full border border-line px-3 py-1 text-sm hover:bg-surface2">
-                      {option}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-            <div ref={bottom} />
-          </div>
-          <form
-            onSubmit={(event) => {
-              event.preventDefault();
-              send();
-            }}
-            className="mt-3 flex gap-2"
-          >
-            <input
-              value={input}
-              onChange={(event) => setInput(event.target.value)}
-              placeholder="e.g. free classroom tomorrow 2–4 pm for 60"
-              aria-label="Your request"
-              className="flex-1 rounded-lg border border-line bg-surface px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/30"
-            />
-            <Button type="button" variant="outline" onClick={listen} aria-label="Voice input" className={cx(listening && "border-primary text-primary")}>
-              <Mic className="h-4 w-4" />
-            </Button>
-            <Button type="submit" busy={busy} aria-label="Send">
-              <Send className="h-4 w-4" />
-            </Button>
-          </form>
-        </Card>
+      <PageHeader kicker="Concierge" title="Say it in one sentence." subtitle="The planner turns a sentence into a venue, guest-house and parking plan, checks every rule twice, and stops. You press Submit; approvers decide." />
 
-        <div className="space-y-4">
-          <Card title="Agent run timeline">
-            {plan.length === 0 && steps.length === 0 ? (
-              <p className="text-sm text-muted">The plan, every tool call and the verification appear here live.</p>
-            ) : (
-              <div className="space-y-3">
-                {plan.length > 0 && (
-                  <ol className="space-y-1">
-                    {plan.map((step, index) => (
-                      <li key={step} className="flex items-center gap-2 text-sm">
-                        {finished || index < done ? <CheckCircle2 className="h-4 w-4 text-good" aria-hidden /> : <span className="h-4 w-4 rounded-full border border-line" aria-hidden />}
-                        <span className={cx(index < done || finished ? "text-ink" : "text-muted")}>{step}</span>
-                      </li>
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          send();
+        }}
+        className="hard bg-surface"
+      >
+        <label htmlFor="ask" className="block border-b-2 border-edge bg-ink px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-bg">
+          Ask › {busy ? "working…" : "ready"}
+        </label>
+        <div className="flex items-stretch">
+          <input
+            id="ask"
+            value={input}
+            onChange={(event) => setInput(event.target.value)}
+            placeholder="Host a 2-day AI workshop on 3–4 Dec for 80 people, 2 external speakers, 12 cars…"
+            className="min-w-0 flex-1 bg-transparent px-4 py-4 font-display text-lg outline-none placeholder:italic placeholder:text-muted sm:text-xl"
+            autoComplete="off"
+          />
+          <button type="button" onClick={listen} aria-label="Voice input" className={cx("border-l-2 border-edge px-4 hover:bg-marker/50", listening && "bg-marker")}>
+            <Mic className="h-5 w-5" />
+          </button>
+          <button type="submit" disabled={busy || !input.trim()} aria-label="Send" className="flex items-center gap-2 border-l-2 border-edge bg-primary px-5 font-mono text-sm font-medium uppercase tracking-wider text-primaryink hover:brightness-110 disabled:opacity-50">
+            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUpRight className="h-4 w-4" />} Plan
+          </button>
+        </div>
+      </form>
+
+      {!started && (
+        <div className="mt-5">
+          <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.2em] text-muted">Or start from one of these</p>
+          <div className="flex flex-wrap gap-2.5">
+            {EXAMPLES.map((example) => (
+              <button key={example} onClick={() => run(example)} className="chip max-w-full text-left">
+                {example}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {started && (
+        <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
+          <Card title="Transcript">
+            <div className="max-h-[46vh] space-y-4 overflow-y-auto pr-1" aria-live="polite">
+              {messages.map((message, index) => (
+                <div key={index} className={cx(message.role === "user" ? "ml-8 border-2 border-edge bg-ink px-3 py-2 text-bg" : "border-l-4 border-primary bg-surface2 px-3 py-2")}>
+                  <p className="mb-0.5 font-mono text-[10px] uppercase tracking-widest opacity-60">{message.role === "user" ? "You" : "Planner"}</p>
+                  <p className="whitespace-pre-wrap text-sm leading-relaxed">{message.text || (busy && index === messages.length - 1 ? <Loader2 className="h-4 w-4 animate-spin" aria-label="Thinking" /> : "")}</p>
+                </div>
+              ))}
+              {clarify && (
+                <div className="border-2 border-dashed border-primary p-3">
+                  <p className="mb-2 text-sm font-semibold">{clarify.question}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {clarify.options.map((option) => (
+                      <button key={option} onClick={() => run(clarify.original, clarify, option)} className="chip">
+                        {option}
+                      </button>
                     ))}
-                  </ol>
-                )}
-                <ul className="space-y-2">
-                  {steps.filter((step) => step.name !== "declare_plan").map((step) => (
-                    <li key={step.id} className="rounded-lg border border-line p-2 text-xs">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="font-mono font-medium">{step.name}</span>
-                        {step.summary === undefined ? <Loader2 className="h-3 w-3 animate-spin" aria-label="Running" /> : <Badge tone={step.error ? "bad" : "good"}>{step.latency?.toFixed(0)} ms</Badge>}
-                      </div>
-                      <p className="mt-1 text-muted">{step.rationale}</p>
-                      <p className="mt-1 break-all font-mono text-[11px] text-muted">{JSON.stringify(step.args).slice(0, 160)}</p>
-                      {step.summary && <p className={cx("mt-1", step.error && "text-bad")}>→ {step.summary}</p>}
-                    </li>
-                  ))}
-                </ul>
-                {verify && (
-                  <div className="flex flex-wrap gap-2 text-xs">
-                    <Badge tone={verify.policy.ok ? "good" : "bad"}>
-                      {verify.policy.ok ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />} policy engine
-                    </Badge>
-                    <Badge tone={verify.validator.ok ? "good" : "bad"}>
-                      {verify.validator.ok ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />} independent validator
-                    </Badge>
                   </div>
+                </div>
+              )}
+              <div ref={bottom} />
+            </div>
+          </Card>
+
+          <Card title="Run log">
+            {plan.length === 0 && steps.length === 0 ? (
+              <p className="text-sm text-muted">The plan, every tool call and the double check appear here as they happen.</p>
+            ) : (
+              <ol className="relative ml-2 space-y-4 border-l-2 border-edge pl-6">
+                {plan.map((step, index) => {
+                  const complete = finished || index < done;
+                  return (
+                    <li key={step} className="relative">
+                      <span className={cx("absolute -left-[33px] top-0.5 grid h-5 w-5 place-items-center border-2 border-edge font-mono text-[10px]", complete ? "bg-good text-primaryink" : "bg-surface")}>
+                        {complete ? "✓" : index + 1}
+                      </span>
+                      <p className={cx("text-sm font-semibold", !complete && "text-muted")}>{step}</p>
+                      {visibleSteps[index] && (
+                        <div className="mt-1.5 border border-line bg-surface2 p-2 font-mono text-[11px] leading-snug">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="font-medium text-primary">{visibleSteps[index].name}()</span>
+                            {visibleSteps[index].summary === undefined ? <Loader2 className="h-3 w-3 animate-spin" aria-label="Running" /> : <Badge tone={visibleSteps[index].error ? "bad" : "good"}>{visibleSteps[index].latency?.toFixed(0)} ms</Badge>}
+                          </div>
+                          <p className="mt-1 font-sans text-xs text-muted">{visibleSteps[index].rationale}</p>
+                          <p className="mt-1 break-all opacity-60">{JSON.stringify(visibleSteps[index].args).slice(0, 140)}</p>
+                          {visibleSteps[index].summary && <p className={cx("mt-1", visibleSteps[index].error && "text-bad")}>→ {visibleSteps[index].summary}</p>}
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
+                {verify && (
+                  <li className="relative">
+                    <span className="absolute -left-[33px] top-0.5 grid h-5 w-5 place-items-center border-2 border-edge bg-marker font-mono text-[10px]">2×</span>
+                    <p className="mb-1 text-sm font-semibold">Checked twice, without the model</p>
+                    <div className="flex flex-wrap gap-2 text-xs">
+                      <Badge tone={verify.policy.ok ? "good" : "bad"}>
+                        {verify.policy.ok ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />} policy engine
+                      </Badge>
+                      <Badge tone={verify.validator.ok ? "good" : "bad"}>
+                        {verify.validator.ok ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />} independent validator
+                      </Badge>
+                    </div>
+                  </li>
                 )}
-              </div>
+              </ol>
             )}
           </Card>
+        </div>
+      )}
+
+      {proposals.length > 0 && (
+        <div className="mt-8 space-y-6">
+          <div className="perforation" aria-hidden />
           {proposals.map((proposal, index) => (
             <ProposalCard key={`${proposal.title}-${index}`} proposal={proposal} onDiscard={() => setProposals((current) => current.filter((_, i) => i !== index))} />
           ))}
-          {finished && proposals.length === 0 && !clarify && messages.length > 0 && (
-            <Notice tone="info">No state was changed. When a proposal appears you decide whether to submit it.</Notice>
-          )}
         </div>
-      </div>
+      )}
+      {finished && proposals.length === 0 && !clarify && started && (
+        <div className="mt-6">
+          <Notice tone="info">No state was changed. When a proposal appears you decide whether to submit it.</Notice>
+        </div>
+      )}
     </>
   );
 }

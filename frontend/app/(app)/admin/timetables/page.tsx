@@ -104,7 +104,7 @@ export default function TimetableImportPage() {
                   {preview.clarifications.map((c) => (
                     <div key={c.id} className="rounded-lg border border-primary/40 p-3">
                       <p className="mb-2 text-sm font-medium">{c.question}</p>
-                      <div className="flex flex-wrap gap-2">{c.options.map((o) => <button key={o} onClick={() => answer.mutate({ id: c.id, value: o })} className="rounded-full border border-line px-3 py-1 text-sm hover:bg-surface2">{o}</button>)}</div>
+                      <div className="flex flex-wrap gap-2">{c.options.map((o) => <button key={o} onClick={() => answer.mutate({ id: c.id, value: o })} className="chip">{o}</button>)}</div>
                     </div>
                   ))}
                 </div>
@@ -150,3 +150,4 @@ export default function TimetableImportPage() {
     </>
   );
 }
+

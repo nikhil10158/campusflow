@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useMutation } from "@tanstack/react-query";
 import { Camera, ScanLine } from "lucide-react";
@@ -65,7 +65,7 @@ export default function SecurityPage() {
       <div className="mx-auto max-w-xl space-y-4">
         <Card>
           <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); scan.mutate(token); }}>
-            <Field label="Pass token or link"><Input value={token} onChange={(e) => setToken(e.target.value)} placeholder="12.ab34cdâ€¦ or https://â€¦/pass/12.ab34â€¦" autoFocus /></Field>
+            <Field label="Pass token or link"><Input value={token} onChange={(e) => setToken(e.target.value)} placeholder="12.ab34cd… or https://…/pass/12.ab34…" autoFocus /></Field>
             <Field label="This gate belongs to lot"><Select value={lot} onChange={(e) => setLot(e.target.value)}><option value="">Any lot</option>{lots?.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}</Select></Field>
             <div className="flex gap-2">
               <Button type="submit" busy={scan.isPending} className="flex-1"><ScanLine className="h-4 w-4" /> Check pass</Button>
@@ -79,7 +79,7 @@ export default function SecurityPage() {
           <div role="status" className={cx("rounded-2xl p-8 text-center", LOOK[scan.data.result])}>
             <div className="text-5xl font-bold tracking-tight">{scan.data.result === "VALID" ? "VALID" : scan.data.result.replace(/_/g, " ")}</div>
             {scan.data.pass && (
-              <p className="mt-3 text-lg">{scan.data.pass.plate ?? scan.data.pass.type} Â· {fmtDateTime(scan.data.pass.valid_from)} â†’ {fmtDateTime(scan.data.pass.valid_to)}</p>
+              <p className="mt-3 text-lg">{scan.data.pass.plate ?? scan.data.pass.type} · {fmtDateTime(scan.data.pass.valid_from)} → {fmtDateTime(scan.data.pass.valid_to)}</p>
             )}
           </div>
         )}

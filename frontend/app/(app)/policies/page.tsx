@@ -36,7 +36,7 @@ export default function PoliciesPage() {
           <Input value={question} onChange={(e) => setQuestion(e.target.value)} placeholder="Ask about booking rules…" aria-label="Policy question" />
           <Button type="submit" busy={ask.isPending}>Ask</Button>
         </form>
-        <div className="mt-3 flex flex-wrap gap-2">{SAMPLES.map((s) => <button key={s} onClick={() => submit(s)} className="rounded-full border border-line px-3 py-1 text-xs hover:bg-surface2">{s}</button>)}</div>
+        <div className="mt-3 flex flex-wrap gap-2">{SAMPLES.map((s) => <button key={s} onClick={() => submit(s)} className="chip">{s}</button>)}</div>
       </Card>
       {ask.isError && <div className="mt-4"><ErrorBox error={ask.error} /></div>}
       <div className="mt-4 space-y-3">
@@ -54,3 +54,4 @@ export default function PoliciesPage() {
     </>
   );
 }
+

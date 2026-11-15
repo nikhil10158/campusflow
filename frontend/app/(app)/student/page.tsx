@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
@@ -54,7 +54,7 @@ export default function StudentPage() {
             <Field label="Title"><Input value={title} onChange={(e) => setTitle(e.target.value)} /></Field>
             <div className="grid grid-cols-3 gap-2"><Field label="Date"><Input type="date" value={day || addDays(today, 3)} onChange={(e) => setDay(e.target.value)} /></Field><Field label="From"><Input type="time" value={start} onChange={(e) => setStart(e.target.value)} /></Field><Field label="To"><Input type="time" value={end} onChange={(e) => setEnd(e.target.value)} /></Field></div>
             <div className="grid grid-cols-2 gap-2"><Field label="People"><Input type="number" value={people} onChange={(e) => setPeople(Number(e.target.value))} /></Field><Field label="Room"><Select value={room} onChange={(e) => setRoom(e.target.value)}>{venues?.map((v) => <option key={v.id} value={v.id}>{v.code} ({v.capacity})</option>)}</Select></Field></div>
-            <Field label="Faculty sponsor" hint="Required: students cannot submit alone (BP-1.2)"><Select value={sponsor} onChange={(e) => setSponsor(e.target.value)}><option value="">Choose a sponsorâ€¦</option>{sponsors.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}</Select></Field>
+            <Field label="Faculty sponsor" hint="Required: students cannot submit alone (BP-1.2)"><Select value={sponsor} onChange={(e) => setSponsor(e.target.value)}><option value="">Choose a sponsor…</option>{sponsors.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}</Select></Field>
             {!sponsor && <Notice tone="warn">Without a sponsor the policy engine will block the request.</Notice>}
             <Button type="submit" busy={check.isPending} className="w-full">Check and prepare proposal</Button>
           </form>
@@ -64,7 +64,7 @@ export default function StudentPage() {
           {proposal && <ProposalCard proposal={proposal} onDiscard={() => setProposal(null)} />}
           <Card title="My bookings">
             {mine.isPending ? <LoadingRows rows={3} /> : mine.data?.length === 0 ? <Empty>No bookings yet.</Empty> : (
-              <ul className="space-y-1 text-sm">{mine.data?.map((b) => <li key={b.id} className="flex items-center justify-between border-b border-line py-1"><span>#{b.id} {b.event_title} Â· {fmtDateTime(b.start)}</span><StatusBadge state={b.status} /></li>)}</ul>
+              <ul className="space-y-1 text-sm">{mine.data?.map((b) => <li key={b.id} className="flex items-center justify-between border-b border-line py-1"><span>#{b.id} {b.event_title} · {fmtDateTime(b.start)}</span><StatusBadge state={b.status} /></li>)}</ul>
             )}
           </Card>
         </div>
