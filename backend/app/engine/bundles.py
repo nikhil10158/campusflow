@@ -57,7 +57,7 @@ def bundle_violations(requests: list[BookingRequest]) -> list[Violation]:
     start, end = window
     found: list[Violation] = []
     for request in requests:
-        if request.resource_type == "guest_room" and not (request.start <= start and request.end >= end):
+        if request.resource_type == "guest_room" and not (request.start.date() <= start.date() and request.end.date() >= end.date()):
             found.append(policy.hard("P-BUNDLE-WINDOW", "BP-7.2", "Guest nights must cover the whole event"))
         if request.resource_type == "parking" and not (request.start <= start and request.end >= end):
             found.append(policy.hard("P-BUNDLE-WINDOW", "BP-7.2", "Parking must cover arrival before and departure after the event"))

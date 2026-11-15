@@ -198,7 +198,7 @@ def test_bundle_plan_covers_event_and_suggests_related(index) -> None:
     cars = BookingRequest("parking", 1, at("2026-12-03", "09:00"), at("2026-12-03", "18:00"), attendees=80, qty=12, meta={"vehicles": {"car": 12}})
     proposal = plan_bundle(index, RULES, "AI Workshop", [event, nights, cars], external_speakers=2)
     assert proposal.ok, proposal.as_dict(index)
-    short_nights = BookingRequest("guest_room", 4, at("2026-12-03", "14:00"), at("2026-12-04", "11:00"), attendees=2, meta={"guests": 2})
+    short_nights = BookingRequest("guest_room", 4, at("2026-12-04", "14:00"), at("2026-12-05", "11:00"), attendees=2, meta={"guests": 2})
     broken = plan_bundle(index, RULES, "AI Workshop", [event, short_nights, cars])
     assert any(v.code == "P-BUNDLE-WINDOW" for v in broken.bundle_violations)
 

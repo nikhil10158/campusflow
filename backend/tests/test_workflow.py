@@ -176,7 +176,7 @@ def test_bundle_is_atomic_and_confirms_only_after_all_components_approve(client,
     assert created.status_code == 200, created.text
     detail = created.json()
     assert detail["status"] == "SUBMITTED" and len(detail["components"]) == 3
-    bad = {**body, "components": [body["components"][0], {**body["components"][1], "start": "2026-12-03T14:00:00"}, body["components"][2]]}
+    bad = {**body, "components": [body["components"][0], {**body["components"][1], "start": "2026-12-04T14:00:00", "end": "2026-12-05T11:00:00"}, body["components"][2]]}
     before = session.exec(select(t.Booking)).all()
     assert client.post("/bundles", json=bad, headers=faculty).status_code == 409
     fresh(session)

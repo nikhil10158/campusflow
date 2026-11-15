@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app import db
-from app.api import admin, auth, availability, bookings, reference, reports, resources
+from app.api import admin, agent, auth, availability, bookings, exports, reference, reports, resources, timetables
 from app.config import get_settings
 from app.seed import load
 from app.services.errors import ServiceError
@@ -31,7 +31,7 @@ def create_app() -> FastAPI:
     async def service_error_handler(_request: Request, error: ServiceError) -> JSONResponse:
         return JSONResponse(status_code=error.status_code, content={"detail": error.message, **error.data})
 
-    for module in (admin, auth, availability, bookings, reference, reports, resources):
+    for module in (admin, agent, auth, availability, bookings, exports, reference, reports, resources, timetables):
         app.include_router(module.router)
     return app
 

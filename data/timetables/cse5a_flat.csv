@@ -1,0 +1,25 @@
+Section,Day,Start,End,Course Code,Course Name,Faculty,Room,Type
+CSE Sem 5 - Section A,Mon,09:00,11:55,CS5L2,Cs Laboratory 2,Dr. A. Rao,L-1,lab
+CSE Sem 5 - Section A,Mon,12:00,12:55,CS504,Distributed Systems,Dr. B. Rao,B-104,tutorial
+CSE Sem 5 - Section A,Mon,14:00,16:55,CS5L1,Cs Laboratory 1,Dr. M. Gill,L-1,lab
+CSE Sem 5 - Section A,Tue,09:00,09:55,CS502,Compiler Design,Dr. P. Nair,B-104,lecture
+CSE Sem 5 - Section A,Tue,10:00,10:55,CS503,Machine Learning,Dr. T. Reddy,B-104,lecture
+CSE Sem 5 - Section A,Tue,11:00,11:55,HS501,Open Elective,Dr. M. Gill,B-104,lecture
+CSE Sem 5 - Section A,Tue,14:00,14:55,CS504,Distributed Systems,Dr. B. Rao,B-104,lecture
+CSE Sem 5 - Section A,Tue,16:00,16:55,CS505,Information Security,Dr. G. Bose,B-104,lecture
+CSE Sem 5 - Section A,Wed,09:00,09:55,CS502,Compiler Design,Dr. P. Nair,B-104,lecture
+CSE Sem 5 - Section A,Wed,10:00,10:55,HS501,Open Elective,Dr. M. Gill,B-104,lecture
+CSE Sem 5 - Section A,Wed,11:00,11:55,CS503,Machine Learning,Dr. T. Reddy,B-104,lecture
+CSE Sem 5 - Section A,Wed,14:00,14:55,CS504,Distributed Systems,Dr. B. Rao,B-104,lecture
+CSE Sem 5 - Section A,Wed,15:00,15:55,CS505,Information Security,Dr. G. Bose,B-104,lecture
+CSE Sem 5 - Section A,Wed,16:00,16:55,CS501,Theory of Computation,Dr. K. Gill,B-102,lecture
+CSE Sem 5 - Section A,Thu,09:00,09:55,CS504,Distributed Systems,Dr. B. Rao,B-103,lecture
+CSE Sem 5 - Section A,Thu,12:00,12:55,CS503,Machine Learning,Dr. T. Reddy,B-104,lecture
+CSE Sem 5 - Section A,Thu,14:00,14:55,CS502,Compiler Design,Dr. P. Nair,B-104,lecture
+CSE Sem 5 - Section A,Thu,15:00,15:55,CS501,Theory of Computation,Dr. K. Gill,B-104,tutorial
+CSE Sem 5 - Section A,Thu,16:00,16:55,CS505,Information Security,Dr. G. Bose,B-104,lecture
+CSE Sem 5 - Section A,Fri,14:00,14:55,CS501,Theory of Computation,Dr. K. Gill,B-104,lecture
+CSE Sem 5 - Section A,Fri,15:00,15:55,CS505,Information Security,Dr. G. Bose,B-104,tutorial
+CSE Sem 5 - Section A,Fri,16:00,16:55,CS502,Compiler Design,Dr. P. Nair,B-104,tutorial
+CSE Sem 5 - Section A,Sat,10:00,10:55,CS503,Machine Learning,Dr. T. Reddy,B-104,tutorial
+CSE Sem 5 - Section A,Sat,11:00,11:55,CS501,Theory of Computation,Dr. K. Gill,B-104,lecture

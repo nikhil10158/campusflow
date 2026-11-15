@@ -73,7 +73,8 @@ def load_snapshot(session: Session, with_ghosts: bool = True, exclude_booking_id
     snapshot.sections = {s.id: convert(SectionInfo, s) for s in session.exec(select(t.Section))}
     snapshot.faculty = {f.id: f.name for f in session.exec(select(t.Faculty))}
     snapshot.entries = [convert(EntryInfo, e) for e in session.exec(select(t.TimetableEntry).where(t.TimetableEntry.version_id.in_(active)))] if active else []
-    snapshot.exceptions = [convert(ExceptionInfo, e) for e in session.exec(select(t.ScheduleException))]
+    live_entries = {e.id for e in snapshot.entries}
+    snapshot.exceptions = [convert(ExceptionInfo, e) for e in session.exec(select(t.ScheduleException)) if e.entry_id in live_entries]
     snapshot.holidays = {h.date for h in session.exec(select(t.Holiday))}
     snapshot.bookings = [convert(BookingInfo, b, meta=b.meta_json) for b in session.exec(select(t.Booking)) if b.id not in exclude_booking_ids]
     snapshot.maintenance = [convert(MaintenanceInfo, m) for m in session.exec(select(t.Maintenance))]

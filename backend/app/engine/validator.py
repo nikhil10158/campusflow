@@ -138,7 +138,7 @@ def check_bundles(snapshot: Snapshot) -> list[Violation]:
         event_start = min(p.start_dt for p in venues)
         event_end = max(p.end_dt for p in venues)
         for part in parts:
-            if part.resource_type == "guest_room" and not (part.start_dt <= event_start and part.end_dt >= event_end):
+            if part.resource_type == "guest_room" and not (part.start_dt.date() <= event_start.date() and part.end_dt.date() >= event_end.date()):
                 found.append(violation("H-BUNDLE-WINDOW", "BP-7.2", f"Guest nights of booking #{part.id} do not cover the event of bundle {bundle_id}"))
             if part.resource_type == "parking" and not (part.start_dt <= event_start and part.end_dt >= event_end):
                 found.append(violation("H-BUNDLE-WINDOW", "BP-7.2", f"Parking of booking #{part.id} does not cover the event of bundle {bundle_id}"))
