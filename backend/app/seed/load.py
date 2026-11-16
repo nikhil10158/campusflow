@@ -62,6 +62,7 @@ def finalise_confirmed(session: Session) -> None:
 def load_world(session: Session, rows: dict[str, list[dict]]) -> None:
     insert_rows(session, rows)
     session.flush()
+    db.reset_sequences(session)
     finalise_confirmed(session)
     audit.append(session, "system", "seed.loaded", {"venues": len(rows["venue"]), "timetable_entries": len(rows["timetableentry"]), "bookings": len(rows["booking"])})
 

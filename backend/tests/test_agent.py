@@ -220,3 +220,17 @@ def test_policy_listing_groups_rules_by_section(client):
     assert sections[0]["id"] == "BP-1"
     assert sections[0]["rules"][0]["id"] == "BP-1.1"
     assert sum(len(section["rules"]) for section in sections) > 40
+
+
+def test_unhandled_errors_return_json_with_cors_headers(client) -> None:
+    from app.main import app
+
+    def boom() -> None:
+        raise RuntimeError("boom")
+
+    app.add_api_route("/__boom", boom)
+    app.middleware_stack = None
+    response = client.get("/__boom", headers={"Origin": "http://localhost:3000"})
+    assert response.status_code == 500
+    assert response.json() == {"detail": "Internal server error"}
+    assert response.headers["access-control-allow-origin"] == "http://localhost:3000"

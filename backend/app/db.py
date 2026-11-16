@@ -107,3 +107,13 @@ def lock_resource(session: Session, resource_type: str, resource_id: int) -> Non
         return
     table = {"venue": tables.Venue, "guest_room": tables.GuestRoom, "parking": tables.ParkingLot}[resource_type]
     session.query(table).filter(table.id == resource_id).with_for_update().first()
+
+
+def reset_sequences(session: Session) -> None:
+    if session.get_bind().dialect.name != "postgresql":
+        return
+    for model in tables.ALL_TABLES:
+        name = model.__table__.name
+        if "id" not in model.__table__.c or not model.__table__.c.id.primary_key:
+            continue
+        session.execute(text(f"SELECT setval(pg_get_serial_sequence('\"{name}\"', 'id'), COALESCE((SELECT MAX(id) FROM \"{name}\"), 0) + 1, false)"))
