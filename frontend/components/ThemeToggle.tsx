@@ -37,7 +37,7 @@ export function useTheme(): [boolean, () => void] {
     } catch {
       stored = null;
     }
-    set(stored ? stored === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches);
+    set(stored ? stored === "dark" : true);
   }, [ready, set]);
   const toggle = () => {
     apply(!dark);

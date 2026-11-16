@@ -3,72 +3,80 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --bg: #f1edf8;
+  color-scheme: light;
+  --bg: #f2f4ff;
   --surface: #ffffff;
-  --surface-2: #f7f4fc;
-  --line: #e1d9ef;
-  --edge: #c3b7d9;
-  --text: #221a33;
-  --muted: #5d5173;
-  --primary: #5a35c8;
+  --surface-2: #eceffd;
+  --line: #dce1f5;
+  --edge: #b9c1e4;
+  --text: #0e1330;
+  --muted: #525d86;
+  --primary: #5b52f0;
+  --primary-2: #3b7bf6;
   --primary-ink: #ffffff;
-  --tint: #e8defb;
-  --accent: #0e8b7c;
-  --good: #16794f;
-  --good-bg: #d8f2e4;
-  --warn: #8f5d08;
-  --warn-bg: #fbebc4;
-  --bad: #bf2f49;
-  --bad-bg: #fddfe5;
-  --info: #2f5fc4;
-  --info-bg: #dce7fb;
-  --ghost: #ad2e78;
-  --ghost-bg: #fadff0;
-  --layer-timetable: #cbc1de;
-  --layer-confirmed: #4a6ed0;
-  --layer-held: #f2b13e;
-  --layer-maintenance: #968fa3;
-  --layer-released: #1fae98;
+  --link: #4338ca;
+  --tint: #e5e3ff;
+  --accent: #0e7490;
+  --good: #0f7a55;
+  --good-bg: #d6f5e8;
+  --warn: #92600a;
+  --warn-bg: #fdecc3;
+  --bad: #be2a47;
+  --bad-bg: #fde1e7;
+  --info: #2563c9;
+  --info-bg: #dbe8fc;
+  --ghost: #a1269c;
+  --ghost-bg: #f9dcf6;
+  --layer-timetable: #c5ccea;
+  --layer-confirmed: #5b52f0;
+  --layer-held: #f0b23a;
+  --layer-maintenance: #8f97b8;
+  --layer-released: #06b6d4;
   --grain-opacity: 0.5;
-  --lattice: rgba(90, 53, 200, 0.16);
-  --shade: rgba(20, 12, 38, 0.45);
-  --shadow-soft: 0 1px 2px rgba(34, 26, 51, 0.06), 0 6px 16px -8px rgba(60, 36, 120, 0.18);
-  --shadow-lift: 0 2px 4px rgba(34, 26, 51, 0.06), 0 16px 32px -12px rgba(60, 36, 120, 0.34);
+  --lattice: rgba(91, 82, 240, 0.14);
+  --glow: rgba(91, 82, 240, 0.16);
+  --shade: rgba(11, 16, 32, 0.5);
+  --shadow-soft: 0 1px 2px rgba(14, 19, 48, 0.06), 0 6px 16px -8px rgba(60, 50, 160, 0.2);
+  --shadow-lift: 0 2px 4px rgba(14, 19, 48, 0.06), 0 16px 32px -12px rgba(60, 50, 160, 0.38);
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 :root.dark {
-  --bg: #100b1a;
-  --surface: #1a1328;
-  --surface-2: #231a36;
-  --line: #31254a;
-  --edge: #4b3b6c;
-  --text: #efeaf9;
-  --muted: #a99cc6;
-  --primary: #b79cff;
-  --primary-ink: #1a0d3c;
-  --tint: #2d2152;
-  --accent: #4fe0c8;
-  --good: #62d9a1;
-  --good-bg: #113a2a;
-  --warn: #f3c66b;
-  --warn-bg: #3d2d0b;
-  --bad: #ff8da3;
-  --bad-bg: #4a1a28;
-  --info: #8db4ff;
-  --info-bg: #14284f;
-  --ghost: #f29ad2;
-  --ghost-bg: #40173a;
-  --layer-timetable: #45385f;
-  --layer-confirmed: #7b97f0;
-  --layer-held: #d9a028;
-  --layer-maintenance: #6e6684;
-  --layer-released: #2fb59f;
+  color-scheme: dark;
+  --bg: #0b1020;
+  --surface: #121936;
+  --surface-2: #1a2247;
+  --line: #263059;
+  --edge: #3b4880;
+  --text: #f8fafc;
+  --muted: #9ba8cf;
+  --primary: #6c63ff;
+  --primary-2: #3d7bff;
+  --primary-ink: #ffffff;
+  --link: #a19bff;
+  --tint: #232a5c;
+  --accent: #00d4ff;
+  --good: #34d399;
+  --good-bg: #0f2f2c;
+  --warn: #fbbf24;
+  --warn-bg: #33280f;
+  --bad: #ff7a93;
+  --bad-bg: #3a1426;
+  --info: #60a5fa;
+  --info-bg: #10284f;
+  --ghost: #e879f9;
+  --ghost-bg: #321642;
+  --layer-timetable: #3a4577;
+  --layer-confirmed: #6c63ff;
+  --layer-held: #e5a91f;
+  --layer-maintenance: #6b7599;
+  --layer-released: #00d4ff;
   --grain-opacity: 0.4;
-  --lattice: rgba(183, 156, 255, 0.14);
-  --shade: rgba(6, 3, 14, 0.6);
-  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.35), 0 6px 16px -8px rgba(0, 0, 0, 0.55);
-  --shadow-lift: 0 2px 4px rgba(0, 0, 0, 0.35), 0 16px 32px -12px rgba(0, 0, 0, 0.75);
+  --lattice: rgba(108, 99, 255, 0.18);
+  --glow: rgba(108, 99, 255, 0.24);
+  --shade: rgba(3, 6, 16, 0.65);
+  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.35), 0 8px 20px -10px rgba(0, 0, 0, 0.6);
+  --shadow-lift: 0 2px 4px rgba(0, 0, 0, 0.35), 0 18px 36px -14px rgba(0, 0, 0, 0.8);
 }
 
 @theme inline {
@@ -82,6 +90,7 @@
   --color-primary: var(--primary);
   --color-primaryink: var(--primary-ink);
   --color-tint: var(--tint);
+  --color-link: var(--link);
   --color-accent: var(--accent);
   --color-good: var(--good);
   --color-goodbg: var(--good-bg);
@@ -107,7 +116,8 @@ html {
 
 body {
   position: relative;
-  background: var(--bg);
+  background: radial-gradient(1100px 480px at 50% -140px, var(--glow), transparent 70%) top center / 100% 560px no-repeat, var(--bg);
+  overflow-x: clip;
   color: var(--text);
   font-family: var(--font-dm-sans), system-ui, sans-serif;
   font-size: 16px;
@@ -160,24 +170,34 @@ h1, h2, h3, .font-display {
 }
 
 .topbar {
-  --surface: #1f1633;
-  --surface-2: rgba(255, 255, 255, 0.1);
-  --line: rgba(255, 255, 255, 0.13);
-  --edge: rgba(255, 255, 255, 0.26);
-  --text: #f2edfc;
-  --muted: #b5a8d0;
-  --primary: #cbb8ff;
-  --primary-ink: #1c0f3e;
-  --tint: rgba(203, 184, 255, 0.18);
-  --accent: #14b8a6;
-  background-color: var(--surface);
-  background-image: repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 11px);
+  --surface: #0f1530;
+  --surface-2: rgba(255, 255, 255, 0.08);
+  --line: rgba(255, 255, 255, 0.1);
+  --edge: rgba(255, 255, 255, 0.22);
+  --text: #f8fafc;
+  --muted: #a3b0d6;
+  --primary: #8c85ff;
+  --primary-ink: #0b1020;
+  --link: #c4c0ff;
+  --tint: rgba(108, 99, 255, 0.3);
+  --accent: #00d4ff;
+  background-color: rgba(11, 16, 32, 0.86);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  backdrop-filter: blur(14px) saturate(1.3);
   color: var(--text);
-  box-shadow: 0 6px 22px -10px rgba(20, 8, 50, 0.6);
+  box-shadow: 0 8px 24px -14px rgba(0, 0, 0, 0.7);
 }
 
 .dark .topbar {
-  --surface: #0a0614;
+  background-color: rgba(11, 16, 32, 0.78);
+}
+
+.bg-brand {
+  background-image: linear-gradient(135deg, var(--primary), var(--primary-2));
+}
+
+.bg-bar {
+  background-image: linear-gradient(90deg, var(--primary), var(--accent));
 }
 
 .chip {

@@ -8,7 +8,7 @@ import "./globals.css";
 const dmSans = DM_Sans({ variable: "--font-dm-sans", subsets: ["latin"] });
 const bricolage = Bricolage_Grotesque({ variable: "--font-bricolage", subsets: ["latin"] });
 
-const themeScript = `try{var t=localStorage.getItem("campusflow-theme");var d=t?t==="dark":matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.classList.toggle("dark",d)}catch(e){}`;
+const themeScript = `try{var t=localStorage.getItem("campusflow-theme");var d=t?t==="dark":true;document.documentElement.classList.toggle("dark",d)}catch(e){}`;
 
 export const metadata: Metadata = {
   title: "CampusFlow",

@@ -118,14 +118,14 @@ export function StatusBadge({ state }: { state: string }) {
 
 export function Card({ title, actions, children, className }: { title?: ReactNode; actions?: ReactNode; children: ReactNode; className?: string }) {
   return (
-    <section className={cx("card-in rounded-2xl border border-line bg-surface shadow-card", className)}>
+    <section className={cx("card-in min-w-0 rounded-2xl border border-line bg-surface shadow-card", className)}>
       {(title || actions) && (
         <header className="flex flex-wrap items-center justify-between gap-2 px-5 pt-4">
           {title && <h2 className="text-[17px] font-semibold tracking-tight">{title}</h2>}
           {actions}
         </header>
       )}
-      <div className="p-5">{children}</div>
+      <div className="min-w-0 overflow-x-auto p-5">{children}</div>
     </section>
   );
 }
@@ -151,14 +151,14 @@ function HelpPanel({ id, steps }: { id: string; steps: string[] }) {
   }
   return (
     <div className="mb-6">
-      <button onClick={toggle} aria-expanded={open} className="flex items-center gap-1.5 rounded-lg py-1 text-[15px] font-medium text-primary hover:underline">
+      <button onClick={toggle} aria-expanded={open} className="flex items-center gap-1.5 rounded-lg py-1 text-[15px] font-medium text-link hover:underline">
         <HelpCircle className="h-4 w-4" aria-hidden /> {open ? "Hide quick guide" : "Show quick guide"}
       </button>
       {open && (
         <ol className="stagger mt-2 grid gap-3 sm:grid-cols-3">
           {steps.map((step, index) => (
             <li key={step} className="flex gap-3 rounded-xl border border-line bg-surface p-4 text-[15px] leading-snug shadow-card">
-              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-primary text-sm font-semibold text-primaryink">{index + 1}</span>
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-brand text-sm font-semibold text-primaryink">{index + 1}</span>
               {step}
             </li>
           ))}
@@ -173,7 +173,7 @@ export function PageHeader({ title, subtitle, actions, help }: { title: string; 
     <>
       <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
         <div className="max-w-3xl">
-          <span className="accent-bar mb-3 block h-1.5 w-12 rounded-full bg-accent" aria-hidden />
+          <span className="accent-bar mb-3 block h-1.5 w-12 rounded-full bg-bar" aria-hidden />
           <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h1>
           {subtitle && <p className="mt-2 max-w-2xl text-[17px] leading-relaxed text-muted">{subtitle}</p>}
         </div>
@@ -191,7 +191,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 export function Button({ variant = "primary", busy, className, children, disabled, ...rest }: ButtonProps) {
   const styles = {
-    primary: "bg-primary text-primaryink shadow-card hover:-translate-y-px hover:brightness-110 hover:shadow-lift",
+    primary: "bg-brand text-primaryink shadow-card hover:-translate-y-px hover:brightness-110 hover:shadow-lift",
     outline: "border border-edge bg-surface text-ink hover:-translate-y-px hover:border-primary hover:bg-surface2",
     danger: "bg-bad text-white shadow-card hover:-translate-y-px hover:brightness-110",
     ghost: "text-ink hover:bg-surface2",
@@ -242,13 +242,13 @@ export function QuickTiles({ items }: { items: { href: string; title: string; te
       {items.map((item) => (
         <Link key={item.href + item.title} href={item.href} className="group flex flex-col rounded-2xl border border-line bg-surface p-5 shadow-card transition duration-200 hover:-translate-y-1 hover:border-primary hover:shadow-lift">
           {item.icon && (
-            <span className="mb-3 grid h-11 w-11 place-items-center rounded-xl bg-tint text-primary transition duration-200 group-hover:rotate-[-6deg] group-hover:scale-110 group-hover:bg-primary group-hover:text-primaryink">
+            <span className="mb-3 grid h-11 w-11 place-items-center rounded-xl bg-tint text-link transition duration-200 group-hover:rotate-[-6deg] group-hover:scale-110 group-hover:bg-primary group-hover:text-primaryink">
               <item.icon className="h-5 w-5" />
             </span>
           )}
           <span className="flex items-center justify-between gap-2 text-lg font-semibold">
             {item.title}
-            <ArrowRight className="h-4 w-4 shrink-0 text-muted transition-transform group-hover:translate-x-1 group-hover:text-primary" aria-hidden />
+            <ArrowRight className="h-4 w-4 shrink-0 text-muted transition-transform group-hover:translate-x-1 group-hover:text-link" aria-hidden />
           </span>
           <span className="mt-1 text-[15px] leading-snug text-muted">{item.text}</span>
           {item.badge && <span className="mt-2">{item.badge}</span>}

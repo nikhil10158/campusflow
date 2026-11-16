@@ -87,7 +87,7 @@ export default function AdminHome() {
             <li className="flex items-center justify-between"><span>Ghost-class hours to recover per week</span><Badge tone="ghost">{kpis.data?.ghost_bookable_hours_per_week ?? 0}</Badge></li>
             <li className="flex items-center justify-between"><span>Audit chain</span>{audit.data ? <Badge tone={audit.data.ok ? "good" : "bad"}>{audit.data.ok ? `verified (${audit.data.checked} entries)` : "BROKEN"}</Badge> : "…"}</li>
           </ul>
-          <div className="mt-3 flex flex-wrap gap-2 text-sm"><Link className="text-primary underline" href="/approvals">Open approvals</Link><Link className="text-primary underline" href="/admin/reports">Ghost classes</Link><Link className="text-primary underline" href="/admin/audit">Audit log</Link></div>
+          <div className="mt-3 flex flex-wrap gap-2 text-sm"><Link className="text-link underline" href="/approvals">Open approvals</Link><Link className="text-link underline" href="/admin/reports">Ghost classes</Link><Link className="text-link underline" href="/admin/audit">Audit log</Link></div>
         </Card>
         <Card title="AI assistant quota">
           {status.data ? <><p className="text-sm">Mode <Badge tone={status.data.mode === "live" ? "good" : "neutral"}>{status.data.mode}</Badge> {status.data.model && <span className="text-xs text-muted">{status.data.model}</span>}</p><p className="mt-2 text-sm">{status.data.calls_today} of {status.data.daily_limit} calls used today</p>{status.data.mode === "offline" && <Notice tone="info">No Gemini key is set. The deterministic parser and extractive policy answers handle every demo command.</Notice>}</> : <LoadingRows rows={1} />}

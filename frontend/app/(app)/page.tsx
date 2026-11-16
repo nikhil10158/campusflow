@@ -159,7 +159,7 @@ export default function Concierge() {
   return (
     <>
       <div className="mx-auto max-w-3xl pb-6 pt-2 text-center">
-        <span className="drift mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-primary text-primaryink shadow-lift">
+        <span className="drift mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-brand text-primaryink shadow-lift">
           <Sparkles className="h-7 w-7" aria-hidden />
         </span>
         <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">What do you need?</h1>
@@ -183,17 +183,17 @@ export default function Concierge() {
           className="min-w-0 flex-1 bg-transparent px-3 py-3 text-lg outline-none placeholder:text-muted/70"
           autoComplete="off"
         />
-        <button type="button" onClick={listen} aria-label="Speak your request" className={cx("grid h-11 w-11 place-items-center rounded-xl text-muted hover:bg-surface2", listening && "bg-tint text-primary")}>
+        <button type="button" onClick={listen} aria-label="Speak your request" className={cx("grid h-11 w-11 place-items-center rounded-xl text-muted hover:bg-surface2", listening && "bg-tint text-link")}>
           <Mic className="h-5 w-5" />
         </button>
-        <button type="submit" disabled={busy || !input.trim()} aria-label="Send" className="grid h-11 w-11 place-items-center rounded-xl bg-primary text-primaryink transition duration-150 hover:scale-105 hover:brightness-110 active:scale-95 disabled:opacity-40 disabled:hover:scale-100">
+        <button type="submit" disabled={busy || !input.trim()} aria-label="Send" className="grid h-11 w-11 place-items-center rounded-xl bg-brand text-primaryink transition duration-150 hover:scale-105 hover:brightness-110 active:scale-95 disabled:opacity-40 disabled:hover:scale-100">
           {busy ? <Loader2 className="h-5 w-5 animate-spin" /> : <ArrowUp className="h-5 w-5" />}
         </button>
       </form>
       <p className="mx-auto mt-2 max-w-3xl text-center text-sm text-muted">
         Press <kbd className="rounded bg-surface2 px-1.5">/</kbd> to start typing.
         {started && !busy && (
-          <button onClick={startOver} className="ml-3 inline-flex items-center gap-1 font-medium text-primary hover:underline">
+          <button onClick={startOver} className="ml-3 inline-flex items-center gap-1 font-medium text-link hover:underline">
             <RotateCcw className="h-3.5 w-3.5" /> Start over
           </button>
         )}
@@ -218,7 +218,7 @@ export default function Concierge() {
           <Card title="Conversation">
             <div className="max-h-[46vh] space-y-3 overflow-y-auto pr-1" aria-live="polite">
               {messages.map((message, index) => (
-                <div key={index} className={cx("slide max-w-[92%] rounded-2xl px-4 py-2.5 leading-relaxed", message.role === "user" ? "ml-auto bg-primary text-primaryink" : "bg-surface2")}>
+                <div key={index} className={cx("slide max-w-[92%] rounded-2xl px-4 py-2.5 leading-relaxed", message.role === "user" ? "ml-auto bg-brand text-primaryink" : "bg-surface2")}>
                   <p className="whitespace-pre-wrap">{message.text || (busy && index === messages.length - 1 ? <Loader2 className="h-4 w-4 animate-spin" aria-label="Thinking" /> : "")}</p>
                 </div>
               ))}

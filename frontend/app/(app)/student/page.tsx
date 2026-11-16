@@ -48,7 +48,7 @@ export default function StudentPage() {
   });
   return (
     <>
-      <PageHeader title="My requests" subtitle="Clubs request rooms through a faculty sponsor. You only ever see your own bookings." actions={<Link href="/find" className="text-sm text-primary underline">See free rooms</Link>} />
+      <PageHeader title="My requests" subtitle="Clubs request rooms through a faculty sponsor. You only ever see your own bookings." actions={<Link href="/find" className="text-sm text-link underline">See free rooms</Link>} />
       <QuickTiles items={[
         { href: "/", title: "Ask the planner", icon: Sparkles, text: "Describe what your club needs." },
         { href: "/find", title: "Find a room", icon: Search, text: "See which rooms are free and when." },

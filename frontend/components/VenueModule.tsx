@@ -54,7 +54,7 @@ export function VenueModule({ type, title, subtitle, rules, chain }: Props) {
 
   return (
     <>
-      <PageHeader title={title} subtitle={subtitle} actions={<Link href="/" className="text-sm text-primary underline">Ask the Concierge instead</Link>} />
+      <PageHeader title={title} subtitle={subtitle} actions={<Link href="/" className="text-sm text-link underline">Ask the Concierge instead</Link>} />
       <div className="grid gap-4 xl:grid-cols-[1fr_380px]">
         <div className="space-y-4">
           <Card title="Approval chain">

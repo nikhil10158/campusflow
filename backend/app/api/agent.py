@@ -80,3 +80,13 @@ def ask_policies(payload: PolicyAskIn, user: AgentUser) -> dict:
         audit.append(session, user.email, "policy.asked", {"question": payload.question[:300], "refused": answer["refused"], "citations": answer["citations"]})
         session.commit()
     return answer
+
+
+@router.get("/agent/policies")
+def list_policies(user: AgentUser) -> list[dict]:
+    sections: dict[str, dict] = {}
+    for chunk in rag.load_chunks():
+        key, _, title = chunk.section.partition(" ")
+        section = sections.setdefault(key, {"id": key, "title": title, "rules": []})
+        section["rules"].append({"id": chunk.rule_id, "text": chunk.text})
+    return list(sections.values())

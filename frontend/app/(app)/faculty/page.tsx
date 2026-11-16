@@ -61,7 +61,7 @@ export default function FacultyPage() {
 
   return (
     <>
-      <PageHeader title={`Hello, ${user?.name ?? ""}`} subtitle="Today's classes, release proposals for slots you will not use, and your own booking requests." actions={<Link href="/find" className="text-sm text-primary underline">Quick room finder</Link>} />
+      <PageHeader title={`Hello, ${user?.name ?? ""}`} subtitle="Today's classes, release proposals for slots you will not use, and your own booking requests." actions={<Link href="/find" className="text-sm text-link underline">Quick room finder</Link>} />
       <QuickTiles items={[
         { href: "/", title: "Ask the planner", icon: Sparkles, text: "Plan a workshop, quiz or event in one sentence." },
         { href: "/find", title: "Find a room", icon: Search, text: "See what is free right now, with reasons." },
@@ -81,7 +81,7 @@ export default function FacultyPage() {
         </Card>
         <Card title="My requests" className="lg:col-span-2">
           {owned.length === 0 ? <Empty>No requests yet. Ask the Concierge to plan one.</Empty> : (
-            <ul className="space-y-1 text-sm">{owned.map((b) => <li key={b.id} className="flex flex-wrap items-center justify-between gap-2 border-b border-line py-1"><span>#{b.id} {b.event_title} · {fmtDateTime(b.start)}</span><span className="flex items-center gap-2">{b.bundle_id && <Link className="text-xs text-primary underline" href={`/bundles/${b.bundle_id}`}>bundle</Link>}<StatusBadge state={b.status} /></span></li>)}</ul>
+            <ul className="space-y-1 text-sm">{owned.map((b) => <li key={b.id} className="flex flex-wrap items-center justify-between gap-2 border-b border-line py-1"><span>#{b.id} {b.event_title} · {fmtDateTime(b.start)}</span><span className="flex items-center gap-2">{b.bundle_id && <Link className="text-xs text-link underline" href={`/bundles/${b.bundle_id}`}>bundle</Link>}<StatusBadge state={b.status} /></span></li>)}</ul>
           )}
         </Card>
       </div>

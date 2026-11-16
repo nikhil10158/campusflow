@@ -84,7 +84,7 @@ function CalendarTab() {
       </Card>
       <Card title="Venue feeds (busy blocks only)">
         <ul className="grid max-h-72 grid-cols-2 gap-1 overflow-y-auto text-xs">
-          {venues?.map((v) => <li key={v.id}><a className={cx("text-primary underline")} href={`${API_URL}/ics/venues/${v.code}.ics`}>{v.code}.ics</a></li>)}
+          {venues?.map((v) => <li key={v.id}><a className={cx("text-link underline")} href={`${API_URL}/ics/venues/${v.code}.ics`}>{v.code}.ics</a></li>)}
         </ul>
       </Card>
     </div>

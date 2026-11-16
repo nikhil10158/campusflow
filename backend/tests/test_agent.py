@@ -212,3 +212,11 @@ def test_chat_endpoint_streams_sse_and_offline_status(client) -> None:
         body = "".join(response.iter_text())
     assert "event: tool_call" in body and "event: done" in body
     assert client.post("/agent/chat", json={"message": "hi"}, headers=login(client, "security01")).status_code == 403
+
+
+def test_policy_listing_groups_rules_by_section(client):
+    headers = login(client, "faculty01")
+    sections = client.get("/agent/policies", headers=headers).json()
+    assert sections[0]["id"] == "BP-1"
+    assert sections[0]["rules"][0]["id"] == "BP-1.1"
+    assert sum(len(section["rules"]) for section in sections) > 40

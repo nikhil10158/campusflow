@@ -65,14 +65,14 @@ export default function LoginPage() {
       <div className="mx-auto grid min-h-screen max-w-6xl content-center gap-10 px-5 py-10 lg:grid-cols-[1.35fr_1fr]">
         <section>
           <div className="card-in mb-6 flex items-center gap-3">
-            <span className="drift grid h-11 w-11 place-items-center rounded-xl bg-primary text-primaryink shadow-lift">
+            <span className="drift grid h-11 w-11 place-items-center rounded-xl bg-brand text-primaryink shadow-lift">
               <MapPin className="h-6 w-6" aria-hidden />
             </span>
             <span className="font-display text-2xl font-semibold tracking-tight">CampusFlow</span>
           </div>
           <h1 className="card-in max-w-xl text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
             Find and book campus spaces without the{" "}
-            <span className="relative inline-block whitespace-nowrap text-primary">
+            <span className="relative inline-block whitespace-nowrap text-link">
               back-and-forth
               <svg className="underline-draw absolute -bottom-2 left-0 h-3 w-full" viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden>
                 <path d="M2 8 C 40 2, 90 12, 130 6 S 185 4, 198 7" fill="none" stroke="var(--accent)" strokeWidth="3.5" strokeLinecap="round" />
@@ -85,7 +85,7 @@ export default function LoginPage() {
           <div className="stagger grid gap-3 sm:grid-cols-2">
             {ROLES.map((role) => (
               <button key={role.account} disabled={busy} onClick={() => submit(`${role.account}@jklu.demo`)} className="group flex items-start gap-3 rounded-xl border border-line bg-surface p-3.5 text-left shadow-card transition duration-200 hover:-translate-y-1 hover:border-primary hover:shadow-lift active:scale-[0.98] disabled:opacity-50">
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-tint text-primary transition duration-200 group-hover:rotate-[-6deg] group-hover:scale-110 group-hover:bg-primary group-hover:text-primaryink">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-tint text-link transition duration-200 group-hover:rotate-[-6deg] group-hover:scale-110 group-hover:bg-primary group-hover:text-primaryink">
                   <role.icon className="h-5 w-5" aria-hidden />
                 </span>
                 <span>

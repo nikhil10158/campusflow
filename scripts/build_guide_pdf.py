@@ -505,7 +505,7 @@ def build(path):
     story += screen("Login", "The first page. Choose a role to try the demo, or type an account.", [
         ["Role cards (10)", "Click one to sign in as that role with the demo password. You land on the right home page for that role."],
         ["Email / Password / Sign in", "Manual sign-in. Any account@jklu.demo with Demo@1234. Errors appear in a red box."],
-        ["Sun / moon button (top right)", "Switches between the light and dark theme. The choice is remembered."],
+        ["Sun / moon button (top right)", "Switches between the dark (Midnight, the default) and light theme. The choice is remembered."],
     ])
     story += screen("Top bar (every page)", "Navigation and status, always visible.", [
         ["Logo", "Goes to the Assistant."],
@@ -516,8 +516,7 @@ def build(path):
         ["Approvals", "Requests waiting for you. A coloured number shows how many are pending (refreshes every minute)."],
         ["Rules", "Booking rules question-and-answer page."],
         ["Admin menu", "Import timetable, Closures, Usage reports, Performance, Audit log (administrators)."],
-        ["Demo time chip", "Shows the demo clock. All rules use this clock instead of the real time."],
-        ["AI chip", "AI on, AI limited or Offline mode, with the model name on hover."],
+        ["Demo time and AI status", "Shown at the top of the account menu on every screen size (and as small chips on very wide screens). The demo clock replaces the real time for all rules; the assistant shows AI on, AI limited or Offline mode."],
         ["Search (Ctrl K)", "A command palette to jump to any page you may open by typing part of its name."],
         ["Sun / moon switch", "Light or dark theme."],
         ["Account menu", "Shows your name and role, offers the theme switch and Sign out."],
@@ -617,6 +616,8 @@ def build(path):
         ["Cancel all", "Asks 'Release every part of this bundle?'. Yes releases all holds."],
     ])
     story += screen("Booking rules (Rules)", "Ask a question about the rules and get a cited answer.", [
+        ["All booking rules (shown by default)", "Every approved rule, grouped by section (General, Classrooms and seminar halls, Laboratories, Amphitheatres, Guest house, Visitor parking, Bundles, Approvals and escalation, Ranking). Each shows its rule id such as BP-1.2."],
+        ["Filter box and section buttons", "Type a word such as 'lab' or '24 hours' to narrow the list, or press a section button to show only that section."],
         ["Question box and Ask", "Answers come only from the approved policy file, with rule citations such as 'Rule BP-1.2'."],
         ["'Not covered' answer", "If the policies do not cover the question, the answer is exactly: Not covered in the approved policies."],
     ])

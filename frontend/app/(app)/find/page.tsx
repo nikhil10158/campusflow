@@ -27,7 +27,7 @@ function plusMinutes(time: string, minutes: number): string {
 
 function Choice({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
-    <button type="button" onClick={onClick} aria-pressed={active} className={cx("chip", active && "!border-primary !bg-tint !text-primary")}>
+    <button type="button" onClick={onClick} aria-pressed={active} className={cx("chip", active && "!border-primary !bg-tint !text-link")}>
       {children}
     </button>
   );

@@ -51,7 +51,7 @@ function Item({ item }: { item: ApprovalItem }) {
             {item.escalated && <Badge tone="warn"><ArrowUpRight className="h-3 w-3" /> escalated</Badge>}
           </div>
           <p className="text-xs text-muted">{booking.resource_type.replace("_", " ")} · {fmtDateTime(booking.start)} → {fmtDateTime(booking.end)} · {booking.attendees ?? "?"} people</p>
-          {booking.bundle_id && <Link href={`/bundles/${booking.bundle_id}`} className="text-xs text-primary underline">part of bundle #{booking.bundle_id}</Link>}
+          {booking.bundle_id && <Link href={`/bundles/${booking.bundle_id}`} className="text-xs text-link underline">part of bundle #{booking.bundle_id}</Link>}
         </div>
         <div className="flex flex-col items-end gap-1">
           <Badge tone="info">step {item.order}: {item.scope}</Badge>

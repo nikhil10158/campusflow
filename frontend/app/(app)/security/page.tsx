@@ -15,12 +15,12 @@ interface ScanResult {
 }
 
 const LOOK: Record<string, string> = {
-  VALID: "bg-good text-primaryink",
-  EXPIRED: "bg-bad text-primaryink",
-  WRONG_LOT: "bg-warn text-primaryink",
-  NOT_FOUND: "bg-bad text-primaryink",
-  REVOKED: "bg-bad text-primaryink",
-  NOT_YET_VALID: "bg-warn text-primaryink",
+  VALID: "bg-good text-[#07101f]",
+  EXPIRED: "bg-bad text-[#07101f]",
+  WRONG_LOT: "bg-warn text-[#07101f]",
+  NOT_FOUND: "bg-bad text-[#07101f]",
+  REVOKED: "bg-bad text-[#07101f]",
+  NOT_YET_VALID: "bg-warn text-[#07101f]",
 };
 
 export default function SecurityPage() {
