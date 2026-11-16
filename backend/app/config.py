@@ -52,7 +52,7 @@ def build_settings() -> Settings:
         pass_secret=os.environ.get("PASS_SECRET", os.environ.get("JWT_SECRET", "dev-pass-secret")),
         demo_now=datetime.fromisoformat(os.environ.get("DEMO_NOW", "2026-11-16T10:00:00")),
         frontend_origins=[o.strip() for o in os.environ.get("FRONTEND_ORIGINS", "http://localhost:3000").split(",") if o.strip()],
-        frontend_origin_regex=os.environ.get("FRONTEND_ORIGIN_REGEX") or None,
+        frontend_origin_regex=os.environ.get("FRONTEND_ORIGIN_REGEX") or r"https?://(localhost|127\.0\.0\.1)(:\d+)?",
         gemini_api_key=os.environ.get("GEMINI_API_KEY", ""),
         gemini_model=os.environ.get("GEMINI_MODEL", "gemini-3.5-flash-lite"),
         gemini_fallback_models=[m.strip() for m in os.environ.get("GEMINI_FALLBACK_MODELS", "").split(",") if m.strip()],

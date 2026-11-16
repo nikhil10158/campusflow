@@ -39,6 +39,8 @@ export async function api<T>(path: string, options: Options = {}): Promise<T> {
     method: options.method ?? (options.body !== undefined || options.form ? "POST" : "GET"),
     headers,
     body: options.form ?? (options.body !== undefined ? JSON.stringify(options.body) : undefined),
+  }).catch(() => {
+    throw new ApiError(0, `Cannot reach the planner service at ${API_URL}. Start the backend (run.ps1) and try again.`, {});
   });
   if (response.status === 401 && token) {
     useAuth.getState().logout();
