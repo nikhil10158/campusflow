@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { ProposalCard } from "@/components/ProposalCard";
+import { RequestRow, TrackToggle } from "@/components/RequestTracker";
 import { Button, Card, Empty, ErrorBox, Field, Input, LoadingRows, Notice, PageHeader, Select, StatusBadge, QuickTiles } from "@/components/ui";
 import { api } from "@/lib/api";
 import { addDays, fmtDateTime } from "@/lib/format";
@@ -32,7 +33,7 @@ export default function StudentPage() {
   const [room, setRoom] = useState("");
   const [sponsor, setSponsor] = useState("");
   const [proposal, setProposal] = useState<Proposal | null>(null);
-  const mine = useQuery({ queryKey: ["bookings-student"], queryFn: () => api<Booking[]>("/bookings") });
+  const mine = useQuery({ queryKey: ["bookings-student"], queryFn: () => api<Booking[]>("/bookings"), refetchInterval: 15000 });
   const faculty = useQuery({ queryKey: ["faculty-users"], queryFn: () => api<Person[]>("/auth/demo-users") });
   const sponsors = (faculty.data ?? []).filter((p) => p.role === "faculty");
   const check = useMutation({
@@ -71,7 +72,7 @@ export default function StudentPage() {
           {proposal && <ProposalCard proposal={proposal} onDiscard={() => setProposal(null)} />}
           <Card title="My bookings">
             {mine.isPending ? <LoadingRows rows={3} /> : mine.data?.length === 0 ? <Empty>No bookings yet.</Empty> : (
-              <ul className="space-y-1 text-sm">{mine.data?.map((b) => <li key={b.id} className="flex items-center justify-between border-b border-line py-1"><span>#{b.id} {b.event_title} · {fmtDateTime(b.start)}</span><StatusBadge state={b.status} /></li>)}</ul>
+              <ul className="space-y-1 text-sm">{mine.data?.map((b) => <RequestRow key={b.id} booking={b} className="flex items-center justify-between gap-2 border-b border-line py-1"><span>#{b.id} {b.event_title} · {fmtDateTime(b.start)}</span><span className="flex items-center gap-2"><StatusBadge state={b.status} /><TrackToggle /></span></RequestRow>)}</ul>
             )}
           </Card>
         </div>

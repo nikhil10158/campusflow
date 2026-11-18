@@ -4,6 +4,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { ChevronDown, ChevronRight, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 
+import { ApprovalTrail } from "@/components/ApprovalTrail";
 import { Badge, Button, Card, Empty, Field, Input, LoadingRows, Notice, PageHeader, cx } from "@/components/ui";
 import { API_URL, api, download } from "@/lib/api";
 import { fmtDateTime } from "@/lib/format";
@@ -27,7 +28,7 @@ interface Mail {
   created_at: string;
 }
 
-type Tab = "audit" | "outbox" | "calendar";
+type Tab = "audit" | "outbox" | "calendar" | "trail";
 
 function AuditTab() {
   const [action, setAction] = useState("");
@@ -97,11 +98,11 @@ export default function AuditPage() {
     <>
       <PageHeader title="Audit, Outbox and Calendars" subtitle="Every login, search, tool call, approval, import, release and export is chained by hash. Edit one row and verification turns red at that row." />
       <div className="mb-4 flex gap-2" role="tablist">
-        {([["audit", "Audit log"], ["outbox", "Outbox"], ["calendar", "Calendar feeds"]] as [Tab, string][]).map(([key, label]) => (
+        {([["audit", "Audit log"], ["trail", "Approval trail"], ["outbox", "Outbox"], ["calendar", "Calendar feeds"]] as [Tab, string][]).map(([key, label]) => (
           <Button key={key} role="tab" aria-selected={tab === key} variant={tab === key ? "primary" : "outline"} onClick={() => setTab(key)}>{label}</Button>
         ))}
       </div>
-      {tab === "audit" ? <AuditTab /> : tab === "outbox" ? <OutboxTab /> : <CalendarTab />}
+      {tab === "audit" ? <AuditTab /> : tab === "trail" ? <ApprovalTrail /> : tab === "outbox" ? <OutboxTab /> : <CalendarTab />}
     </>
   );
 }

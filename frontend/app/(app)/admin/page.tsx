@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useState } from "react";
 
+import { UtilizationOverview } from "@/components/UtilizationOverview";
 import { Badge, Button, Card, ErrorBox, Input, LoadingRows, Notice, PageHeader, Stat, ConfirmButton, QuickTiles } from "@/components/ui";
 import { api } from "@/lib/api";
 import { fmtDateTime, isoLocal } from "@/lib/format";
@@ -96,6 +97,7 @@ export default function AdminHome() {
           {kpis.data && <div className="grid grid-cols-3 gap-2 text-center"><Stat label="Confirmed" value={kpis.data.bookings.confirmed} tone="good" /><Stat label="Held" value={kpis.data.bookings.held} tone="warn" /><Stat label="Waitlisted" value={kpis.data.bookings.waitlisted} /></div>}
         </Card>
       </div>
+      <UtilizationOverview />
     </>
   );
 }

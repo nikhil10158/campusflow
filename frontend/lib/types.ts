@@ -152,6 +152,7 @@ export interface Booking {
   hold_expires_at: string | null;
   meta: Record<string, unknown>;
   steps: Step[];
+  track?: { status: string; label: string };
 }
 
 export interface ApprovalItem {

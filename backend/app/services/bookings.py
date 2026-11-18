@@ -14,7 +14,8 @@ from app.rules import Rules, load_rules
 from app.services import audit
 from app.services.clock import get_now
 from app.services.errors import BadRequest, Conflict, Forbidden, NotFound
-from app.services.notifications import notify
+from app.services.notifications import notify, notify_admins
+from app.services.tracker import track_label, track_status
 from app.services.snapshot import fresh_index, get_index
 
 RESOURCE_TABLES = {"venue": t.Venue, "guest_room": t.GuestRoom, "parking": t.ParkingLot}
@@ -105,6 +106,7 @@ def submit_booking(session: Session, user: t.User, payload: BookingIn) -> t.Book
     booking = create_held(session, rules, index, request, user, now)
     audit.append(session, user.email, "booking.submitted", {"booking_id": booking.id, "resource": [booking.resource_type, booking.resource_id], "chain": result.approval_chain})
     notify(session, user, f"Request #{booking.id} submitted", f"{booking.event_title} is on hold until approved.", now, booking.id)
+    notify_admins(session, f"New booking request #{booking.id}", f"{user.name or user.email} requested {booking.event_title}.", now, booking.id, skip_user_id=user.id)
     session.commit()
     session.refresh(booking)
     return booking
@@ -142,6 +144,7 @@ def submit_bundle(session: Session, user: t.User, payload: BundleIn) -> t.Bookin
         create_held(session, rules, index, request, user, now, bundle_id=bundle.id, event_title=f"{payload.title}: {request.title}" if request.title else payload.title)
     audit.append(session, user.email, "bundle.submitted", {"bundle_id": bundle.id, "components": len(requests)})
     notify(session, user, f"Bundle #{bundle.id} submitted", f"{payload.title}: {len(requests)} components are on hold together.", now, channels=("email", "whatsapp"))
+    notify_admins(session, f"New bundle request #{bundle.id}", f"{user.name or user.email} requested {payload.title} ({len(requests)} components).", now, skip_user_id=user.id)
     session.commit()
     session.refresh(bundle)
     return bundle
@@ -161,6 +164,7 @@ def booking_dict(session: Session, booking: t.Booking, user: t.User) -> dict:
         "qty": booking.qty, "requester_id": booking.requester_id if full else None, "hold_expires_at": booking.hold_expires_at.isoformat() if booking.hold_expires_at else None,
         "meta": booking.meta_json if full else {}, "priority_class": booking.priority_class,
         "steps": [{"id": s.id, "order": s.order, "scope": s.scope, "status": s.status, "comment": s.comment, "decided_at": s.decided_at.isoformat() if s.decided_at else None} for s in steps] if full else [],
+        "track": {"status": track_status(session, booking), "label": track_label(track_status(session, booking))},
     }
 
 

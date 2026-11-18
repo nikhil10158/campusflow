@@ -139,3 +139,9 @@ class BatchIn(BaseModel):
     events: int = 20
     seed: int = 7
     first_day: date = date(2026, 12, 1)
+
+
+class RecoveryResubmitIn(BaseModel):
+    resource_id: int | None = None
+    start: datetime | None = None
+    end: datetime | None = None

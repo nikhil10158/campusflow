@@ -6,6 +6,7 @@ from sqlmodel import Session, select
 
 from app.config import get_settings
 from app.models.tables import Booking, Pass
+from app.services.mailer import resource_label
 
 TOKEN_LENGTH = 24
 
@@ -66,7 +67,10 @@ def verify(session: Session, token: str, now: datetime, lot_id: int | None = Non
     if issued is None:
         return {"result": "NOT_FOUND", "pass": None}
     details = {"id": issued.id, "type": issued.type, "plate": issued.plate, "resource_id": issued.resource_id, "valid_from": issued.valid_from.isoformat(), "valid_to": issued.valid_to.isoformat(), "scanned_at": issued.scanned_at.isoformat() if issued.scanned_at else None}
-    if issued.revoked:
+    booking = session.get(Booking, issued.booking_id)
+    if booking is not None:
+        details["booking"] = {"id": booking.id, "title": booking.event_title, "resource": resource_label(session, booking), "status": booking.status}
+    if issued.revoked or booking is None or booking.status not in ("CONFIRMED", "COMPLETED"):
         return {"result": "REVOKED", "pass": details}
     if now > issued.valid_to:
         return {"result": "EXPIRED", "pass": details}

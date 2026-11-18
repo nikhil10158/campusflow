@@ -8,7 +8,7 @@ import { fmtDateTime } from "@/lib/format";
 
 interface Verdict {
   result: string;
-  pass: { type: string; plate: string | null; valid_from: string; valid_to: string } | null;
+  pass: { type: string; plate: string | null; valid_from: string; valid_to: string; booking?: { title: string; resource: string } } | null;
 }
 
 const COLOR: Record<string, string> = { VALID: "var(--good)", EXPIRED: "var(--bad)", NOT_FOUND: "var(--bad)", WRONG_LOT: "var(--warn)", REVOKED: "var(--bad)", NOT_YET_VALID: "var(--warn)" };
@@ -24,7 +24,8 @@ export default function PassPage({ params }: { params: Promise<{ token: string }
         {isPending ? <div className="skeleton mx-auto h-16 w-40" /> : <div className="text-5xl font-bold" style={{ color: COLOR[result ?? "NOT_FOUND"] }}>{(result ?? "").replace(/_/g, " ")}</div>}
         {data?.pass && (
           <div className="mt-4 text-sm">
-            <p className="font-medium">{data.pass.plate ?? data.pass.type}</p>
+            <p className="font-medium">{data.pass.plate ?? data.pass.booking?.title ?? data.pass.type}</p>
+            {data.pass.booking && <p className="text-muted">{data.pass.booking.resource}</p>}
             <p className="text-muted">{fmtDateTime(data.pass.valid_from)} → {fmtDateTime(data.pass.valid_to)}</p>
           </div>
         )}

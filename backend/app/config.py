@@ -39,6 +39,12 @@ class Settings:
     solver_workers: int
     solver_time_limit_s: float
     auto_seed_on_empty: bool
+    smtp_host: str
+    smtp_port: int
+    smtp_user: str
+    smtp_pass: str
+    smtp_from: str
+    smtp_redirect_to: str
 
 
 def build_settings() -> Settings:
@@ -61,6 +67,12 @@ def build_settings() -> Settings:
         solver_workers=workers,
         solver_time_limit_s=float(os.environ.get("SOLVER_TIME_LIMIT_S", default_limit)),
         auto_seed_on_empty=os.environ.get("AUTO_SEED_ON_EMPTY", "true").lower() == "true",
+        smtp_host=os.environ.get("SMTP_HOST", "smtp.gmail.com"),
+        smtp_port=int(os.environ.get("SMTP_PORT", "587")),
+        smtp_user=os.environ.get("SMTP_USER", "").strip(),
+        smtp_pass=os.environ.get("SMTP_PASS", "").replace(" ", ""),
+        smtp_from=os.environ.get("SMTP_FROM", "").strip() or os.environ.get("SMTP_USER", "").strip(),
+        smtp_redirect_to=os.environ.get("SMTP_REDIRECT_TO", "").strip(),
     )
 
 

@@ -192,6 +192,7 @@ def apply_disruption(session: Session, user: t.User, disruption_id: int) -> dict
             requester = session.get(t.User, booking.requester_id)
             if requester:
                 notify(session, requester, f"Booking #{booking.id} moved", proposal["what_changed"], now, booking.id, ("email", "whatsapp"))
+            audit.append(session, user.email, "booking.moved", {"booking_id": booking.id, "change": proposal["what_changed"]})
         elif item["kind"] == "booking" and proposal.get("action") == "move_parking" and proposal["allocations"]:
             booking = session.get(t.Booking, item["source_id"])
             first = proposal["allocations"][0]

@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 from sqlmodel import Session
 
 from app import db
-from app.api import admin, agent, auth, availability, bookings, exports, reference, reports, resources, timetables
+from app.api import admin, agent, auth, availability, bookings, exports, notifications, reference, reports, resources, timetables, tracking
 from app.config import get_settings
 from app.seed import load
 from app.services.errors import ServiceError
@@ -64,7 +64,7 @@ def create_app() -> FastAPI:
     async def service_error_handler(_request: Request, error: ServiceError) -> JSONResponse:
         return JSONResponse(status_code=error.status_code, content={"detail": error.message, **error.data})
 
-    for module in (admin, agent, auth, availability, bookings, exports, reference, reports, resources, timetables):
+    for module in (admin, agent, auth, availability, bookings, exports, notifications, reference, reports, resources, timetables, tracking):
         app.include_router(module.router)
     return app
 

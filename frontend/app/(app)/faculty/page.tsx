@@ -4,6 +4,7 @@ import { Sparkles, Search, Timer, FlaskConical } from "lucide-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 
+import { RequestRow, TrackToggle } from "@/components/RequestTracker";
 import { Badge, Button, Card, Empty, LoadingRows, PageHeader, StatusBadge, QuickTiles } from "@/components/ui";
 import { api } from "@/lib/api";
 import { WEEKDAYS, addDays, fmtDateTime, minToHHMM, weekdayOf } from "@/lib/format";
@@ -45,7 +46,7 @@ export default function FacultyPage() {
       return results.flatMap((r) => r.entries.filter((e) => e.faculty === user?.name).map((e) => ({ ...e, section: `${r.section.dept} Sem ${r.section.semester}-${r.section.name}` })));
     },
   });
-  const bookings = useQuery({ queryKey: ["bookings-mine"], queryFn: () => api<Booking[]>("/bookings") });
+  const bookings = useQuery({ queryKey: ["bookings-mine"], queryFn: () => api<Booking[]>("/bookings"), refetchInterval: 15000 });
   const release = useMutation({
     mutationFn: (row: Row) => {
       let day = today;
@@ -81,7 +82,7 @@ export default function FacultyPage() {
         </Card>
         <Card title="My requests" className="lg:col-span-2">
           {owned.length === 0 ? <Empty>No requests yet. Ask the Concierge to plan one.</Empty> : (
-            <ul className="space-y-1 text-sm">{owned.map((b) => <li key={b.id} className="flex flex-wrap items-center justify-between gap-2 border-b border-line py-1"><span>#{b.id} {b.event_title} · {fmtDateTime(b.start)}</span><span className="flex items-center gap-2">{b.bundle_id && <Link className="text-xs text-link underline" href={`/bundles/${b.bundle_id}`}>bundle</Link>}<StatusBadge state={b.status} /></span></li>)}</ul>
+            <ul className="space-y-1 text-sm">{owned.map((b) => <RequestRow key={b.id} booking={b} className="flex flex-wrap items-center justify-between gap-2 border-b border-line py-1"><span>#{b.id} {b.event_title} · {fmtDateTime(b.start)}</span><span className="flex items-center gap-2">{b.bundle_id && <Link className="text-xs text-link underline" href={`/bundles/${b.bundle_id}`}>bundle</Link>}<StatusBadge state={b.status} /><TrackToggle /></span></RequestRow>)}</ul>
           )}
         </Card>
       </div>

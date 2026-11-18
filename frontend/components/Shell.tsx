@@ -14,6 +14,7 @@ import { api } from "@/lib/api";
 import { useAuth, type User } from "@/lib/store";
 import type { AgentStatus } from "@/lib/types";
 
+import { NotificationBell } from "./NotificationBell";
 import { ThemeToggle, useTheme } from "./ThemeToggle";
 import { Toasts, cx } from "./ui";
 
@@ -334,7 +335,7 @@ export function Shell({ children }: { children: ReactNode }) {
       <header className="topbar sticky top-0 z-30 border-b border-line">
         <div className="mx-auto flex h-16 max-w-[1500px] items-center gap-3 px-4 lg:px-6">
           <Logo />
-          <nav className="ml-3 hidden min-w-0 items-center gap-0.5 xl:flex" aria-label="Main">
+          <nav className="ml-3 hidden min-w-0 items-center gap-0.5 min-[1400px]:flex" aria-label="Main">
             {groups.map((group, index) => (
               <NavLink key={group.label} group={group} pathname={pathname} badge={group.label === "Approvals" ? pending : 0} align={index >= groups.length - 2 ? "right" : "left"} />
             ))}
@@ -345,14 +346,15 @@ export function Shell({ children }: { children: ReactNode }) {
               <Search className="h-4 w-4" aria-hidden /> <span className="hidden 2xl:inline">Search</span> <kbd className="hidden rounded bg-surface2 px-1.5 text-xs 2xl:inline">Ctrl K</kbd>
             </button>
             <ThemeToggle />
+            <NotificationBell />
             <UserMenu dark={dark} toggleTheme={toggleTheme} />
-            <button onClick={() => setMobile(!mobile)} aria-label="Menu" aria-expanded={mobile} className="grid h-9 w-9 place-items-center rounded-full border border-line bg-surface transition hover:border-primary xl:hidden">
+            <button onClick={() => setMobile(!mobile)} aria-label="Menu" aria-expanded={mobile} className="grid h-9 w-9 place-items-center rounded-full border border-line bg-surface transition hover:border-primary min-[1400px]:hidden">
               {mobile ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
         </div>
         {mobile && (
-          <nav className="slide max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-line px-4 py-4 xl:hidden" aria-label="Mobile">
+          <nav className="slide max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-line px-4 py-4 min-[1400px]:hidden" aria-label="Mobile">
             <div className="mx-auto grid max-w-[1500px] gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
               {groups.map((group) => (
                 <div key={group.label}>

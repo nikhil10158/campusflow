@@ -244,6 +244,17 @@ class Notification(SQLModel, table=True):
     related_booking_id: int | None = None
 
 
+class UserNotification(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id", index=True)
+    kind: str = "booking"
+    title: str
+    body: str = ""
+    booking_id: int | None = Field(default=None, index=True)
+    read_at: NaiveDatetime | None = None
+    created_at: NaiveDatetime
+
+
 class CalendarEvent(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     booking_id: int | None = Field(default=None, index=True)
@@ -291,7 +302,7 @@ class Disruption(SQLModel, table=True):
 ALL_TABLES = [
     Building, Venue, Term, Holiday, Section, Faculty, Course, User, TimetableVersion, TimetableEntry,
     ScheduleException, BookingBundle, Booking, ApprovalStep, Maintenance, GuestRoom, Guest, ParkingLot,
-    Pass, OccupancySample, AuditLog, Notification, CalendarEvent, LLMUsage, Job, Setting, Disruption,
+    Pass, OccupancySample, AuditLog, Notification, UserNotification, CalendarEvent, LLMUsage, Job, Setting, Disruption,
 ]
 
 

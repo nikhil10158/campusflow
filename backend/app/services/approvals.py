@@ -154,6 +154,9 @@ def decide(session: Session, user: t.User, step_id: int, approve: bool, comment:
     session.flush()
     audit.append(session, user.email, "approval.approved", {"step_id": step.id, "booking_id": booking.id, "scope": step.scope})
     outcome: dict = {"outcome": "step_approved", "booking_id": booking.id}
+    requester = session.get(t.User, booking.requester_id)
+    if requester and not fully_approved(session, booking):
+        notify(session, requester, f"Booking #{booking.id} updated", f"The {step.scope} step approved it. It is waiting for the next approval.", now, booking.id)
     if fully_approved(session, booking):
         if booking.bundle_id:
             outcome = {**confirm_bundle_if_ready(session, booking.bundle_id, user.email, now), "booking_id": booking.id}
